@@ -24,7 +24,7 @@ class CartPage extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const CategoryPage()),
+                  MaterialPageRoute(builder: (context) => CategoryPage()),
                 );
               }),
           SpeedDialChild(

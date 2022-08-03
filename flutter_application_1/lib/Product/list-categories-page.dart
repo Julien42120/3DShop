@@ -8,25 +8,25 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:get_it/get_it.dart';
 import '../Paiment/cart-page.dart';
 
+// ignore: use_key_in_widget_constructors
 class CategoryPage extends StatefulWidget {
-  const CategoryPage({Key? key}) : super(key: key);
-
   @override
-  State<CategoryPage> createState() => _CategoryPageState();
+  _CategoryListState createState() => _CategoryListState();
 }
 
-class _CategoryPageState extends State<CategoryPage> {
+class _CategoryListState extends State<CategoryPage> {
   CategorysService get service => GetIt.I<CategorysService>();
 
   APIResponse<List<Categorys>>? _apiResponse;
 
   @override
   void initState() {
-    _fetchCategories();
     super.initState();
+    _fetchCategories();
   }
 
   _fetchCategories() async {
+    setState(() {});
     _apiResponse = await service.getCategoriesList();
   }
 
@@ -47,7 +47,7 @@ class _CategoryPageState extends State<CategoryPage> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const CategoryPage()),
+                  MaterialPageRoute(builder: (context) => CategoryPage()),
                 );
               }),
           SpeedDialChild(

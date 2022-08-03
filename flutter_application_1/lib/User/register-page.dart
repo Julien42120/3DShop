@@ -3,12 +3,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/Paiment/cart-page.dart';
 import 'package:flutter_application_1/Product/list-categories-page.dart';
-import 'package:flutter_application_1/User/account-page.dart';
-import 'package:flutter_application_1/User/register-page.dart';
+import 'package:flutter_application_1/User/log-in-page.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
-class LogInPage extends StatelessWidget {
-  const LogInPage({Key? key}) : super(key: key);
+class RegisterPage extends StatelessWidget {
+  const RegisterPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +26,7 @@ class LogInPage extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const CategoryPage()),
+                  MaterialPageRoute(builder: (context) => CategoryPage()),
                 );
               }),
           SpeedDialChild(
@@ -55,12 +54,12 @@ class LogInPage extends StatelessWidget {
             ],
           )),
           child: Container(
-            margin: EdgeInsets.only(top: 100),
+            margin: EdgeInsets.only(top: 90),
             child: Column(
               children: [
                 Container(
                   child: const Text(
-                    'Connexion',
+                    'Inscription',
                     style: TextStyle(color: Colors.white, fontSize: 40),
                   ),
                 ),
@@ -73,7 +72,18 @@ class LogInPage extends StatelessWidget {
                           obscureText: true,
                           decoration: InputDecoration(
                             border: OutlineInputBorder(),
-                            labelText: 'Pseudo',
+                            labelText: 'Choix du pseudo',
+                            labelStyle: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.only(top: 30),
+                        child: const TextField(
+                          obscureText: true,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: "Adresse mail ",
                             labelStyle: TextStyle(color: Colors.white),
                           ),
                         ),
@@ -89,42 +99,39 @@ class LogInPage extends StatelessWidget {
                           ),
                         ),
                       ),
+                      Container(
+                        margin: const EdgeInsets.only(top: 30),
+                        child: const TextField(
+                          obscureText: true,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: "Confirmation mot de passe",
+                            labelStyle: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ),
+                      Container(
+                        margin: const EdgeInsets.only(top: 30),
+                        child: const TextField(
+                          obscureText: true,
+                          decoration: InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: "Choix d'une photo de profil",
+                            labelStyle: TextStyle(color: Colors.white),
+                          ),
+                        ),
+                      ),
                     ])),
                 ElevatedButton(
                   onPressed: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const AccountPage()),
+                          builder: (context) => const LogInPage()),
                     );
                   },
-                  child: const Text("Me connecter"),
+                  child: Text("M'inscrire"),
                 ),
-                Container(
-                  margin: EdgeInsets.only(top: 30),
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const RegisterPage()),
-                      );
-                    },
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        const Text(
-                          "Vous n'avez pas encore de compte ? ",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                        const Text(
-                          "Cliquez ici !",
-                          style: TextStyle(color: Colors.white),
-                        ),
-                      ],
-                    ),
-                  ),
-                )
               ],
             ),
           ),

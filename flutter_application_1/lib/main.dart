@@ -48,7 +48,7 @@ class HomePage extends StatelessWidget {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const CategoryPage()),
+              MaterialPageRoute(builder: (context) => CategoryPage()),
             );
           },
           style: ButtonStyle(

@@ -1,22 +1,27 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_application_1/Models/api_response.dart';
 import 'package:flutter_application_1/Models/category.dart';
 import 'package:get_it/get_it.dart';
 import 'package:http/http.dart' as http;
 
 class CategorysService {
-  static const String api = 'http://192.168.1.5:8000/api/categories';
+  static const String api = 'http://127.0.0.1:8000';
   static const headers = {'Content-Type': 'application/json'};
 
-  Future<APIResponse<List<Categorys>>> getCategoriesList() {
-    return http.get(Uri.parse(api)).then((data) {
+  Future<APIResponse<List<Categorys>>> getCategoriesList() async {
+    return await http.get(Uri.parse(api + "/categories")).then((data) {
       if (data.statusCode == 200) {
         final jsonData = json.decode(data.body);
         final category = <Categorys>[];
+        print(jsonData);
         for (var item in jsonData) {
-          category.add(Categorys.fromJson(item));
+          category.map((e) => Categorys.fromJson(item)).toList();
         }
+        print(category);
+
         return APIResponse<List<Categorys>>(
             data: category, error: false, errorMessage: '');
       }
@@ -28,6 +33,7 @@ class CategorysService {
       );
     });
   }
+
   // Future<APIResponse<Property>> getPropertyById(String propertyId) {
   //   return http
   //       .get(Uri.parse(api + '/appartement/' + propertyId), headers: headers)
