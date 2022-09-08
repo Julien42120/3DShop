@@ -1,16 +1,35 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/Category/list-categories-page-mobile.dart';
+import 'package:flutter_application_1/Models/print.dart';
+import 'package:flutter_application_1/Services/print_service.dart';
 import 'package:flutter_application_1/User/account-page.dart';
 import 'package:flutter_application_1/Paiment/cart-page.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
-import 'list-categories-page.dart';
+class ConfigProductPage extends StatefulWidget {
+  String? printId;
+  ConfigProductPage({Key? key, required this.printId}) : super(key: key);
 
-class ConfigProductPage extends StatelessWidget {
-  const ConfigProductPage({Key? key}) : super(key: key);
+  @override
+  State<ConfigProductPage> createState() => _ConfigProductPageState();
+}
+
+class _ConfigProductPageState extends State<ConfigProductPage> {
+  Print? printing;
+
+  @override
+  void initState() {
+    super.initState();
+    _getData();
+  }
+
+  void _getData() async {
+    var printing = await PrintService().getPrintById(widget.printId as String);
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
-    String selectedValue = "USA";
     return Scaffold(
       floatingActionButton: SpeedDial(
         animatedIcon: AnimatedIcons.menu_close,
@@ -25,7 +44,7 @@ class ConfigProductPage extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => CategoryPage()),
+                  MaterialPageRoute(builder: (context) => CategoryPageMobile()),
                 );
               }),
           SpeedDialChild(
@@ -37,176 +56,175 @@ class ConfigProductPage extends StatelessWidget {
                   MaterialPageRoute(builder: (context) => const CartPage()),
                 );
               }),
-          SpeedDialChild(
-              child: Icon(Icons.settings),
-              backgroundColor: Colors.white,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const AccountPage()),
-                );
-              }),
         ],
       ),
-      body: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
-        child: Container(
-          height: 900,
-          decoration: const BoxDecoration(
-              gradient: LinearGradient(
-            begin: Alignment.topRight,
-            end: Alignment.bottomLeft,
-            colors: [
-              Color.fromARGB(255, 0, 17, 255),
-              Color.fromARGB(255, 0, 0, 0),
-            ],
-          )),
-          child: Column(
-            children: [
-              Container(
-                height: 250,
+      // ignore: unnecessary_null_comparison
+      body: printing == null
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : SingleChildScrollView(
+              scrollDirection: Axis.vertical,
+              child: Container(
+                height: 900,
                 decoration: const BoxDecoration(
-                  color: Colors.white,
                   image: DecorationImage(
-                      fit: BoxFit.cover,
-                      repeat: ImageRepeat.noRepeat,
-                      image: AssetImage('assets/images/image4.jpg')),
-                ),
-              ),
-              Container(
-                margin: const EdgeInsets.only(top: 30),
-                child: const Center(
-                  child: Text(
-                    'Titre Produit',
-                    style: TextStyle(color: Colors.white, fontSize: 20),
+                    alignment: Alignment.center,
+                    matchTextDirection: true,
+                    repeat: ImageRepeat.noRepeat,
+                    fit: BoxFit.cover,
+                    image: AssetImage('assets/images/marble.jpg'),
                   ),
                 ),
-              ),
-              Container(
-                margin: const EdgeInsets.all(30),
-                child: const Text(
-                  'Description du produit vendu, explications sur les paramètres et couleurs a choisir ainsi que l\'imprimante utilisé pour l\'impression',
-                  style: TextStyle(color: Colors.white, fontSize: 12),
-                ),
-              ),
-              Container(
-                margin: const EdgeInsets.only(top: 30),
-                child: Row(
+                child: Column(
                   children: [
                     Container(
-                      margin: const EdgeInsets.only(left: 40),
-                      child: const Text(
-                        'Sélectionnez le type de plastique',
-                        style: TextStyle(color: Colors.white, fontSize: 15),
+                      height: 250,
+                      decoration: const BoxDecoration(
+                        color: Colors.white,
+                        image: DecorationImage(
+                            fit: BoxFit.cover,
+                            repeat: ImageRepeat.noRepeat,
+                            image: AssetImage('assets/images/image4.jpg')),
                       ),
                     ),
                     Container(
-                      margin: const EdgeInsets.only(left: 20),
-                      child: DropdownButton(
-                        items: dropdownResist,
-                        onChanged: (String? value) {},
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                margin: const EdgeInsets.only(top: 10),
-                child: Row(
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.only(left: 50),
-                      child: const Text(
-                        'Sélectionnez une couleur',
-                        style: TextStyle(color: Colors.white, fontSize: 15),
+                      margin: const EdgeInsets.only(top: 30),
+                      child: Center(
+                        child: Text(
+                          printing!.title,
+                          style: TextStyle(color: Colors.black, fontSize: 20),
+                        ),
                       ),
                     ),
                     Container(
-                      margin: const EdgeInsets.only(left: 20),
-                      child: DropdownButton(
-                        items: dropdownColors,
-                        onChanged: (String? value) {},
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Container(
-                margin: const EdgeInsets.only(top: 10),
-                child: Row(
-                  children: [
-                    Container(
-                      margin: const EdgeInsets.only(left: 60),
-                      child: const Text(
-                        'Sélectionnez un format',
-                        style: TextStyle(color: Colors.white, fontSize: 15),
+                      margin: const EdgeInsets.all(30),
+                      child: Text(
+                        printing!.description,
+                        style: TextStyle(color: Colors.black, fontSize: 12),
                       ),
                     ),
                     Container(
-                      margin: const EdgeInsets.only(left: 20),
-                      child: DropdownButton(
-                        items: dropdownItems,
-                        onChanged: (String? value) {},
+                      margin: const EdgeInsets.only(top: 30),
+                      child: Row(
+                        children: [
+                          Container(
+                            margin: const EdgeInsets.only(left: 40),
+                            child: Text(
+                              printing!.price.toString(),
+                              style:
+                                  TextStyle(color: Colors.black, fontSize: 15),
+                            ),
+                          ),
+                          Container(
+                            margin: const EdgeInsets.only(left: 20),
+                            child: DropdownButton(
+                              items: dropdownResist,
+                              onChanged: (String? value) {},
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
-              ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Container(
-                    height: 100,
-                    color: const Color.fromARGB(122, 184, 184, 184),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    Container(
+                      margin: const EdgeInsets.only(top: 10),
+                      child: Row(
+                        children: [
+                          Container(
+                            margin: const EdgeInsets.only(left: 50),
+                            child: const Text(
+                              'Sélectionnez une couleur',
+                              style:
+                                  TextStyle(color: Colors.black, fontSize: 15),
+                            ),
+                          ),
+                          Container(
+                            margin: const EdgeInsets.only(left: 20),
+                            child: DropdownButton(
+                              items: dropdownColors,
+                              onChanged: (String? value) {},
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Container(
+                      margin: const EdgeInsets.only(top: 10),
+                      child: Row(
+                        children: [
+                          Container(
+                            margin: const EdgeInsets.only(left: 60),
+                            child: const Text(
+                              'Sélectionnez un format',
+                              style:
+                                  TextStyle(color: Colors.black, fontSize: 15),
+                            ),
+                          ),
+                          Container(
+                            margin: const EdgeInsets.only(left: 20),
+                            child: DropdownButton(
+                              items: dropdownItems,
+                              onChanged: (String? value) {},
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.end,
                       children: [
                         Container(
-                            width: 200,
-                            margin: const EdgeInsets.only(left: 20),
-                            child: const Text(
-                              '55,25' '€',
-                              style: TextStyle(
-                                  color: Color.fromARGB(255, 0, 156, 44),
-                                  fontSize: 30,
-                                  fontWeight: FontWeight.bold),
-                            )),
-                        TextButton(
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => const CartPage()),
-                            );
-                          },
+                          height: 100,
+                          color: const Color.fromARGB(122, 184, 184, 184),
                           child: Row(
-                            children: const [
-                              Icon(
-                                Icons.shopping_cart_checkout,
-                                color: Color.fromARGB(255, 0, 156, 44),
-                                size: 35,
-                              ),
-                              Text(
-                                'Acheter',
-                                style: TextStyle(
-                                    color: Colors.white,
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 20),
-                              ),
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                            children: [
+                              Container(
+                                  width: 200,
+                                  margin: const EdgeInsets.only(left: 20),
+                                  child: Text(
+                                    printing!.price.toString() + '€',
+                                    style: const TextStyle(
+                                        color: Color.fromARGB(255, 0, 156, 44),
+                                        fontSize: 30,
+                                        fontWeight: FontWeight.bold),
+                                  )),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => const CartPage()),
+                                  );
+                                },
+                                child: Row(
+                                  children: const [
+                                    Icon(
+                                      Icons.shopping_cart_checkout,
+                                      color: Color.fromARGB(255, 0, 156, 44),
+                                      size: 35,
+                                    ),
+                                    Text(
+                                      'Acheter',
+                                      style: TextStyle(
+                                          color: Colors.black,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 20),
+                                    ),
+                                  ],
+                                ),
+                              )
                             ],
                           ),
-                        )
+                        ),
                       ],
-                    ),
-                  ),
-                ],
-              )
-            ],
-          ),
-        ),
-      ),
+                    )
+                  ],
+                ),
+              ),
+            ),
     );
   }
 }

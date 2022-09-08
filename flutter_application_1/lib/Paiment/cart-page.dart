@@ -1,9 +1,8 @@
 // ignore: file_names
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/Category/list-categories-page-mobile.dart';
 import 'package:flutter_application_1/User/account-page.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
-
-import '../Product/list-categories-page.dart';
 
 class CartPage extends StatelessWidget {
   const CartPage({Key? key}) : super(key: key);
@@ -24,16 +23,7 @@ class CartPage extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => CategoryPage()),
-                );
-              }),
-          SpeedDialChild(
-              child: Icon(Icons.person),
-              backgroundColor: Colors.white,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const AccountPage()),
+                  MaterialPageRoute(builder: (context) => CategoryPageMobile()),
                 );
               }),
         ],

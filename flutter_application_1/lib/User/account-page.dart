@@ -1,11 +1,32 @@
 import 'package:accordion/accordion.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/Category/list-categories-page-mobile.dart';
+import 'package:flutter_application_1/Models/user.dart';
 import 'package:flutter_application_1/Paiment/cart-page.dart';
-import 'package:flutter_application_1/Product/list-categories-page.dart';
+import 'package:flutter_application_1/Services/user_service.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 
-class AccountPage extends StatelessWidget {
-  const AccountPage({Key? key}) : super(key: key);
+class AccountPage extends StatefulWidget {
+  String? userId;
+  AccountPage({Key? key, required this.userId}) : super(key: key);
+
+  @override
+  State<AccountPage> createState() => _AccountPageState();
+}
+
+class _AccountPageState extends State<AccountPage> {
+  User? user;
+
+  @override
+  void initState() {
+    super.initState();
+    _getData();
+  }
+
+  void _getData() async {
+    var user = await UserService().accessProfile();
+    setState(() {});
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +44,7 @@ class AccountPage extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => CategoryPage()),
+                  MaterialPageRoute(builder: (context) => CategoryPageMobile()),
                 );
               }),
           SpeedDialChild(

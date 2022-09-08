@@ -1,29 +1,20 @@
-class Categorys {
-  final int? id;
-  final String category;
-  final String image;
+import 'package:json_annotation/json_annotation.dart';
+part 'category.g.dart';
 
-  const Categorys({
+@JsonSerializable()
+class Category {
+  int? id;
+  String category;
+  String image;
+
+  Category({
     this.id,
     required this.category,
     required this.image,
   });
 
-  // Categorys.empty(this.id, this.category, this.image);
+  factory Category.fromJson(Map<String, dynamic> json) =>
+      _$CategoryFromJson(json);
 
-  factory Categorys.fromJson(Map<String, dynamic> json) {
-    return Categorys(
-      id: json['id'],
-      category: json['category'],
-      image: json['image'],
-    );
-  }
-
-  // Map<String, dynamic> toJson() {
-  //   return {
-  //     "id": id,
-  //     "category": category,
-  //     "image": image,
-  //   };
-  // }
+  Map<String, dynamic> toJson() => _$CategoryToJson(this);
 }
