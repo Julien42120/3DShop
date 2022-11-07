@@ -1,9 +1,15 @@
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/Models/category.dart';
+import 'package:flutter_application_1/Models/print.dart';
 import 'package:flutter_application_1/Product/list-products-page-desktop.dart';
 import 'package:flutter_application_1/Services/category_service.dart';
+import 'package:flutter_application_1/Services/print_service.dart';
+import 'package:flutter_application_1/Services/user_service.dart';
+import 'package:flutter_application_1/User/account-page.dart';
 import 'package:flutter_application_1/User/register-page-desktop.dart';
+import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 // ignore: use_key_in_widget_constructors
@@ -15,7 +21,7 @@ class CategoryPageDesktop extends StatefulWidget {
 class _CategoryListState extends State<CategoryPageDesktop> {
   late List<Category>? _categoryModel = [];
   ContainerTransitionType _transitionType = ContainerTransitionType.fade;
-
+  String? userConnected;
   @override
   void initState() {
     super.initState();
@@ -25,6 +31,7 @@ class _CategoryListState extends State<CategoryPageDesktop> {
   void _getData() async {
     // ignore prefer_conditional_assignment
     _categoryModel = await CategoryService().getCategoriesList();
+    userConnected = await UserService().storage.read(key: 'token');
     setState(() {});
   }
 
@@ -32,40 +39,74 @@ class _CategoryListState extends State<CategoryPageDesktop> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: PreferredSize(
-        preferredSize: Size.fromHeight(100),
+        preferredSize: Size.fromHeight(60),
         child: Container(
-          padding: const EdgeInsets.only(top: 20),
-          decoration:
-              const BoxDecoration(color: Color.fromARGB(255, 31, 31, 31)),
+          decoration: const BoxDecoration(color: Colors.white),
           child: AppBar(
-            title: Center(
-              child: Text(
-                'Catégories',
-                style: GoogleFonts.lobster(
-                  fontSize: 35,
-                ),
-              ),
+            iconTheme: IconThemeData(
+              color: Colors.black,
             ),
+            title: Center(
+                child: DefaultTextStyle(
+              style: GoogleFonts.robotoCondensed(
+                fontSize: 30,
+                color: Colors.black,
+              ),
+              child: AnimatedTextKit(
+                totalRepeatCount: 1,
+                animatedTexts: [
+                  TyperAnimatedText(
+                    'Catégory',
+                    speed: Duration(milliseconds: 230),
+                  ),
+                ],
+              ),
+            )),
             actions: [
+              // if (userConnected == null)
               OpenContainer<bool>(
-                  closedColor: Colors.transparent,
-                  openColor: Colors.transparent,
-                  transitionType: _transitionType,
-                  transitionDuration: Duration(milliseconds: 1400),
-                  openBuilder: (BuildContext _, VoidCallback openContainer) {
-                    return RegisterPageDesktop();
-                  },
-                  closedElevation: 0.0,
-                  closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                    return Container(
-                        margin: const EdgeInsets.only(right: 30),
-                        child: const Icon(
-                          Icons.person_add,
-                          size: 40,
-                        ));
-                  }),
+                closedColor: Colors.transparent,
+                openColor: Colors.transparent,
+                transitionType: _transitionType,
+                transitionDuration: Duration(milliseconds: 600),
+                openBuilder: (BuildContext _, VoidCallback openContainer) {
+                  return RegisterPageDesktop();
+                },
+                closedElevation: 0.0,
+                closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                  return Container(
+                    margin: const EdgeInsets.only(right: 30),
+                    child: const Icon(
+                      Icons.person_add,
+                      size: 40,
+                      color: Colors.black,
+                    ),
+                  );
+                },
+              )
+              // else
+              //   OpenContainer<bool>(
+              //     closedColor: Colors.transparent,
+              //     openColor: Colors.transparent,
+              //     transitionType: _transitionType,
+              //     transitionDuration: Duration(milliseconds: 600),
+              //     openBuilder: (BuildContext _, VoidCallback openContainer) {
+              //       return AccountPage();
+              //     },
+              //     closedElevation: 0.0,
+              //     closedBuilder: (BuildContext _, VoidCallback openContainer) {
+              //       return Container(
+              //         margin: const EdgeInsets.only(right: 30),
+              //         child: const Icon(
+              //           Icons.person,
+              //           size: 40,
+              //           color: Colors.black,
+              //         ),
+              //       );
+              //     },
+              //   ),
             ],
-            backgroundColor: Colors.transparent,
+            backgroundColor: Colors.white,
           ),
         ),
       ),
@@ -81,13 +122,13 @@ class _CategoryListState extends State<CategoryPageDesktop> {
                   matchTextDirection: true,
                   repeat: ImageRepeat.noRepeat,
                   fit: BoxFit.cover,
-                  image: AssetImage('assets/images/galaxy.png'),
+                  image: AssetImage('assets/images/background.jpg'),
                 ),
               ),
               child: GridView.builder(
                 gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
                     maxCrossAxisExtent: 800,
-                    childAspectRatio: 3 / 1,
+                    childAspectRatio: 2 / 1,
                     crossAxisSpacing: 1,
                     mainAxisSpacing: 1),
                 itemCount: _categoryModel?.length,
@@ -95,49 +136,64 @@ class _CategoryListState extends State<CategoryPageDesktop> {
                   closedColor: Colors.transparent,
                   openColor: Colors.transparent,
                   transitionType: _transitionType,
-                  transitionDuration: Duration(milliseconds: 1400),
+                  transitionDuration: const Duration(milliseconds: 600),
                   openBuilder: (BuildContext _, VoidCallback openContainer) {
                     return ProductsPageDesktop(
-                      categoryID: _categoryModel![index].id.toString(),
-                    );
+                        categoryID: _categoryModel![index].id.toString(),
+                        nameOfCategory: _categoryModel![index].category);
                   },
                   closedElevation: 0.0,
                   closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                    return Container(
-                      constraints: const BoxConstraints(
-                          minHeight: 150,
-                          minWidth: double.infinity,
-                          maxHeight: 150),
-                      margin: const EdgeInsets.all(8),
-                      decoration: const BoxDecoration(
-                          image: DecorationImage(
-                            alignment: Alignment.center,
-                            matchTextDirection: true,
-                            repeat: ImageRepeat.noRepeat,
-                            fit: BoxFit.cover,
-                            image: AssetImage('assets/images/image4.jpg'),
-                          ),
-                          borderRadius: BorderRadius.all(Radius.circular(10))),
-                      child: Column(
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.end,
-                            children: [
-                              Container(
-                                margin: const EdgeInsets.all(10),
-                                child: Text(_categoryModel![index].category,
-                                    style: GoogleFonts.lobster(
-                                      fontSize: 30,
-                                      color: Colors.white,
-                                    )),
+                    return AnimationConfiguration.staggeredGrid(
+                      position: index,
+                      duration: const Duration(milliseconds: 600),
+                      columnCount: 1,
+                      child: ScaleAnimation(
+                        child: FadeInAnimation(
+                          child: Container(
+                            margin: const EdgeInsets.all(25),
+                            decoration: BoxDecoration(
+                              image: DecorationImage(
+                                alignment: Alignment.center,
+                                matchTextDirection: true,
+                                repeat: ImageRepeat.noRepeat,
+                                fit: BoxFit.cover,
+                                image:
+                                    NetworkImage(_categoryModel![index].image),
                               ),
-                            ],
+                              boxShadow: const [
+                                BoxShadow(
+                                  offset: Offset(8, 8),
+                                  spreadRadius: -6,
+                                  blurRadius: 15,
+                                  color: Color.fromARGB(255, 75, 75, 75),
+                                ),
+                              ],
+                              borderRadius: const BorderRadius.all(
+                                Radius.circular(5),
+                              ),
+                            ),
+                            child: Column(
+                              children: [
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Container(
+                                      margin: const EdgeInsets.all(10),
+                                      child: Text(
+                                          _categoryModel![index].category,
+                                          style: GoogleFonts.robotoCondensed(
+                                            fontSize: 30,
+                                            color: Colors.white,
+                                          )),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
-                          const SizedBox(
-                            height: 20.0,
-                          ),
-                        ],
+                        ),
                       ),
                     );
                   },

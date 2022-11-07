@@ -1,23 +1,21 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter_application_1/Models/api_response.dart';
-import 'package:flutter_application_1/Models/category.dart';
-import 'package:flutter_application_1/Services/user_service.dart';
+import 'package:flutter_application_1/Models/material.dart';
 import 'package:http/http.dart' as http;
 
-class CategoryService {
-  Future<List<Category>?> getCategoriesList() async {
+class MaterialService {
+  Future<List<MaterialPrint>?> getMaterialList() async {
     try {
-      var url = Uri.parse(APIResponse.baseUrl + APIResponse.categoriesUrl);
+      var url = Uri.parse(APIResponse.baseUrl + APIResponse.material);
       var response = await http.get(url);
       if (response.statusCode == 200) {
         var jsonResponse = json.decode(response.body);
-        List<Category> results = [];
-        jsonResponse['categories'].forEach((v) {
-          results.add(Category.fromJson(v));
+        List<MaterialPrint> results = [];
+        jsonResponse.forEach((v) {
+          results.add(MaterialPrint.fromJson(v));
         });
         print(results);
-
         return results;
       } else {
         throw Exception('Failed to load Categories from API');

@@ -6,4 +6,8 @@ class APIResponse {
   static String register = '/api/users';
   static String login = '/authentication_token';
   static String profile = '/profile';
+  static String modifyUser = '/api/users/';
+  static String logout = '/logout';
+  static String material = '/api/materials';
+  static String cartPrint = '/api/cart_prints';
 }

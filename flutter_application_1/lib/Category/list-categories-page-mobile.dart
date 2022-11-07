@@ -2,6 +2,7 @@ import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/Models/category.dart';
 import 'package:flutter_application_1/Product/list-products-page-desktop.dart';
+import 'package:flutter_application_1/Product/list-products-page-mobile.dart';
 import 'package:flutter_application_1/Services/category_service.dart';
 import 'package:flutter_application_1/User/account-page.dart';
 import 'package:flutter_application_1/User/register-page-desktop.dart';
@@ -81,13 +82,13 @@ class _CategoryListState extends State<CategoryPageMobile> {
                   matchTextDirection: true,
                   repeat: ImageRepeat.noRepeat,
                   fit: BoxFit.cover,
-                  image: AssetImage('assets/images/galaxy.png'),
+                  image: AssetImage('assets/images/background.jpg'),
                 ),
               ),
               child: GridView.builder(
                 gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
                     maxCrossAxisExtent: 400,
-                    childAspectRatio: 3 / 2,
+                    childAspectRatio: 2 / 1,
                     crossAxisSpacing: 3,
                     mainAxisSpacing: 3),
                 itemCount: _categoryModel?.length,
@@ -96,10 +97,10 @@ class _CategoryListState extends State<CategoryPageMobile> {
                   openColor: Colors.transparent,
                   transitionType: _transitionType,
                   transitionDuration: const Duration(
-                    milliseconds: 1400,
+                    milliseconds: 600,
                   ),
                   openBuilder: (BuildContext _, VoidCallback openContainer) {
-                    return ProductsPageDesktop(
+                    return ProductsPageMobile(
                       categoryID: _categoryModel![index].id.toString(),
                     );
                   },
@@ -119,8 +120,16 @@ class _CategoryListState extends State<CategoryPageMobile> {
                           fit: BoxFit.cover,
                           image: AssetImage('assets/images/image4.jpg'),
                         ),
+                        boxShadow: [
+                          BoxShadow(
+                            offset: Offset(13, 13),
+                            spreadRadius: -6,
+                            blurRadius: 15,
+                            color: Color.fromRGBO(0, 0, 0, 1),
+                          ),
+                        ],
                         borderRadius: BorderRadius.all(
-                          Radius.circular(10),
+                          Radius.circular(5),
                         ),
                       ),
                       child: Column(
@@ -133,7 +142,7 @@ class _CategoryListState extends State<CategoryPageMobile> {
                                 margin: const EdgeInsets.all(10),
                                 child: Text(
                                   _categoryModel![index].category,
-                                  style: GoogleFonts.lobster(
+                                  style: GoogleFonts.robotoCondensed(
                                     fontSize: 30,
                                     color: Colors.white,
                                   ),

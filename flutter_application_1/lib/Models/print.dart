@@ -1,34 +1,27 @@
+import 'package:flutter_application_1/Models/user.dart';
 import 'package:json_annotation/json_annotation.dart';
 part 'print.g.dart';
 
 @JsonSerializable()
 class Print {
-  int? id;
+  int id;
   String category;
-  String user;
-  String material;
+  User user;
   String title;
-  String? images;
   String description;
   int price;
-  int defaultSize;
-  int defaultWeight;
-  String? optionSize;
+  int default_size;
+  int default_weight;
 
   Print({
-    this.id,
+    required this.id,
     required this.category,
     required this.user,
-    required this.material,
     required this.title,
-    required this.images,
     required this.description,
     required this.price,
-    // ignore: non_constant_identifier_names
-    required this.defaultSize,
-    // ignore: non_constant_identifier_names
-    required this.defaultWeight,
-    required this.optionSize,
+    required this.default_size,
+    required this.default_weight,
   });
 
   factory Print.fromJson(Map<String, dynamic> json) => _$PrintFromJson(json);

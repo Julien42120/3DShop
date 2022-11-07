@@ -1,12 +1,16 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter_application_1/Models/api_response.dart';
+import 'package:flutter_application_1/Models/order.dart';
+import 'package:flutter_application_1/Models/print.dart';
 import 'package:flutter_application_1/Models/user.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
+
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class UserService {
 // Obtain shared preferences.
+  final storage = const FlutterSecureStorage();
 
   Future<User> createUser(String email, String password, String avatar,
       String pseudo, String phone) async {
@@ -44,8 +48,9 @@ class UserService {
     );
     if (response.statusCode == 200) {
       var result = jsonDecode(response.body);
-      print(result);
-      await setToken(result['token']);
+      String token = (result['token']);
+      print(token);
+      await storage.write(key: 'token', value: token);
       return result;
     } else {
       throw Exception('Erreur de Connexion');
@@ -54,25 +59,88 @@ class UserService {
   }
 
   Future<User> accessProfile() async {
+    var url = Uri.parse(APIResponse.baseUrl + APIResponse.profile);
+    var token = await storage.read(key: 'token');
     var response = await http.get(
-      Uri.parse(APIResponse.baseUrl + APIResponse.profile),
-      headers: <String, String>{
-        'Content-Type': 'application/json; charset=UTF-8',
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token'
       },
     );
+    print(response);
     if (response.statusCode == 200) {
       var jsonResponse = await json.decode(response.body);
-      var results = jsonResponse['user'];
-      User.fromJson(results);
+      var userResponse = jsonResponse['user'];
+      var user = User.fromJson(userResponse);
+      return user;
+    } else {
+      throw Exception('Failed to connect user'); // TO DO
+    }
+  }
+
+  Future<List<Order>?> accessOrder() async {
+    var token = await storage.read(key: 'token');
+    var url = Uri.parse(APIResponse.baseUrl + APIResponse.profile);
+    var response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token'
+      },
+    );
+    print(response);
+    if (response.statusCode == 200) {
+      var jsonResponse = await json.decode(response.body);
+      List<Order> results = [];
+      jsonResponse['order'].forEach((v) {
+        results.add(Order.fromJson(v));
+      });
       return results;
     } else {
       throw Exception('Failed to connect user');
     }
-    // ignore: empty_catches
   }
 
-  setToken(String token) async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('token', token);
+  Future logout() async {
+    var url = Uri.parse(APIResponse.baseUrl + APIResponse.logout);
+    var response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    );
+
+    await storage.delete(key: 'token');
+  }
+
+  Future<User> modifyUser(String userId, String email, String password,
+      String avatar, String pseudo, String phone) async {
+    var token = await storage.read(key: 'token');
+    var url = Uri.parse(APIResponse.baseUrl + APIResponse.modifyUser + userId);
+    print(url);
+    var response = await http.put(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Authorization': 'Bearer $token'
+      },
+      body: jsonEncode(<String, String>{
+        'email': email,
+        'password': password,
+        'avatar': avatar,
+        'pseudo': pseudo,
+        'phone': phone
+      }),
+    );
+    print(response);
+    if (response.statusCode == 200) {
+      return User.fromJson(jsonDecode(response.body));
+    } else {
+      throw Exception('Failed to connect user');
+    }
   }
 }

@@ -75,7 +75,7 @@ class _ProductsPageMobileState extends State<ProductsPageMobile> {
                   matchTextDirection: true,
                   repeat: ImageRepeat.noRepeat,
                   fit: BoxFit.cover,
-                  image: AssetImage('assets/images/marble.jpg'),
+                  image: AssetImage('assets/images/background.jpg'),
                 ),
               ),
               child: GridView.builder(

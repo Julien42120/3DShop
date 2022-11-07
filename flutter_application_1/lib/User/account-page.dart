@@ -1,416 +1,435 @@
 import 'package:accordion/accordion.dart';
+import 'package:animated_text_kit/animated_text_kit.dart';
+import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_application_1/Category/list-categories-page-mobile.dart';
+import 'package:flutter_application_1/Category/list-categories-page-desktop.dart';
+import 'package:flutter_application_1/Models/order.dart';
 import 'package:flutter_application_1/Models/user.dart';
-import 'package:flutter_application_1/Paiment/cart-page.dart';
 import 'package:flutter_application_1/Services/user_service.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:flutter_application_1/User/register-page-desktop.dart';
+import 'package:flutter_application_1/User/update_user.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 class AccountPage extends StatefulWidget {
-  String? userId;
-  AccountPage({Key? key, required this.userId}) : super(key: key);
+  AccountPage({Key? key}) : super(key: key);
 
   @override
   State<AccountPage> createState() => _AccountPageState();
 }
 
 class _AccountPageState extends State<AccountPage> {
-  User? user;
+  User? _userModel;
+  late List<Order>? _orderModel = [];
+  ContainerTransitionType _transitionType = ContainerTransitionType.fade;
 
-  @override
+  UserService userService = UserService();
+  var i = 0;
+
   void initState() {
     super.initState();
     _getData();
   }
 
   void _getData() async {
-    var user = await UserService().accessProfile();
+    _userModel = await userService.accessProfile();
+    _orderModel = await userService.accessOrder();
     setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      floatingActionButton: SpeedDial(
-        animatedIcon: AnimatedIcons.menu_close,
-        overlayOpacity: 0.5,
-        overlayColor: Colors.black,
-        spacing: 15,
-        spaceBetweenChildren: 10,
-        children: [
-          SpeedDialChild(
-              child: Icon(Icons.home),
-              backgroundColor: Colors.white,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => CategoryPageMobile()),
-                );
-              }),
-          SpeedDialChild(
-              child: Icon(Icons.shopping_cart),
-              backgroundColor: Colors.white,
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) => const CartPage()),
-                );
-              }),
-        ],
-      ),
-      body: SingleChildScrollView(
-        scrollDirection: Axis.vertical,
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(60),
         child: Container(
-          height: 1500,
-          decoration: const BoxDecoration(
-              gradient: LinearGradient(
-            begin: Alignment.topRight,
-            end: Alignment.bottomLeft,
-            colors: [
-              Color.fromARGB(255, 0, 17, 255),
-              Color.fromARGB(255, 0, 0, 0),
+          decoration: const BoxDecoration(color: Colors.white),
+          child: AppBar(
+            automaticallyImplyLeading: false,
+            iconTheme: IconThemeData(
+              color: Colors.black, //change your color here
+            ),
+            title: Center(
+                child: Container(
+              margin: EdgeInsets.only(right: 60),
+              child: DefaultTextStyle(
+                style: GoogleFonts.robotoCondensed(
+                  fontSize: 30,
+                  color: Colors.black,
+                ),
+                child: AnimatedTextKit(
+                  totalRepeatCount: 1,
+                  animatedTexts: [
+                    TyperAnimatedText(
+                      'Mon Profil',
+                      speed: Duration(milliseconds: 230),
+                    ),
+                  ],
+                ),
+              ),
+            )),
+            actions: [
+              OpenContainer<bool>(
+                closedColor: Colors.transparent,
+                openColor: Colors.transparent,
+                transitionType: _transitionType,
+                transitionDuration: Duration(milliseconds: 600),
+                openBuilder: (BuildContext _, VoidCallback openContainer) {
+                  return CategoryPageDesktop();
+                },
+                closedElevation: 0.0,
+                closedBuilder: (BuildContext _, VoidCallback openContainer) {
+                  return Container(
+                    margin: const EdgeInsets.only(right: 30),
+                    child: const Icon(
+                      Icons.home,
+                      size: 40,
+                      color: Colors.black,
+                    ),
+                  );
+                },
+              ),
             ],
-          )),
-          child: Column(children: [
-            Center(
+            backgroundColor: Colors.white,
+          ),
+        ),
+      ),
+      body: _userModel == null
+          ? const Center(
+              child: CircularProgressIndicator(),
+            )
+          : SingleChildScrollView(
               child: Container(
-                margin: const EdgeInsets.only(top: 70),
-                width: 150,
-                height: 150,
                 decoration: const BoxDecoration(
                   image: DecorationImage(
                     alignment: Alignment.center,
                     matchTextDirection: true,
                     repeat: ImageRepeat.noRepeat,
                     fit: BoxFit.cover,
-                    image: AssetImage('assets/images/image6.jpg'),
+                    image: AssetImage('assets/images/background.jpg'),
                   ),
-                  borderRadius: BorderRadius.all(Radius.circular(75)),
                 ),
-              ),
-            ),
-            Center(
-              child: Container(
-                margin: const EdgeInsets.only(top: 20),
-                child: const Text(
-                  'Julien',
-                  style: TextStyle(color: Colors.white, fontSize: 30),
-                ),
-              ),
-            ),
-            Container(
-              width: 350,
-              margin: const EdgeInsets.all(15),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  Column(
-                    children: const [
-                      Text(
-                        '15',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 25,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        'Produits',
-                        style: TextStyle(color: Colors.white, fontSize: 12),
-                      ),
-                    ],
-                  ),
-                  Column(
-                    children: const [
-                      Text(
-                        '5',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 25,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        'Ventes',
-                        style: TextStyle(color: Colors.white, fontSize: 12),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                  ),
-                  Column(
-                    children: const [
-                      Text(
-                        '162',
-                        style: TextStyle(
-                            color: Colors.white,
-                            fontSize: 25,
-                            fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        'Likes',
-                        style: TextStyle(color: Colors.white, fontSize: 12),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-            Container(
-              margin: EdgeInsets.all(12),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
-                  Text(
-                    'Mes produits',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(
-              height: 150,
-              child: ListView(
-                scrollDirection: Axis.horizontal,
-                children: [
-                  for (var $i = 0; $i < 7; $i++)
-                    Container(
-                      margin: const EdgeInsets.all(10),
-                      width: 200,
-                      decoration: const BoxDecoration(
+                child: Column(
+                  children: [
+                    Center(
+                      child: Container(
+                        margin: const EdgeInsets.only(top: 30),
+                        width: 200,
+                        height: 200,
+                        decoration: BoxDecoration(
                           image: DecorationImage(
                             alignment: Alignment.center,
                             matchTextDirection: true,
                             repeat: ImageRepeat.noRepeat,
                             fit: BoxFit.cover,
-                            image: AssetImage('assets/images/image4.jpg'),
+                            image: NetworkImage(_userModel!.avatar),
                           ),
-                          borderRadius: BorderRadius.all(Radius.circular(20))),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Container(
-                            child: Container(
-                              margin: EdgeInsets.all(5),
-                              padding: EdgeInsets.all(5),
-                              decoration: BoxDecoration(
-                                  color: Color.fromARGB(157, 255, 255, 255),
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(20))),
-                              child: Icon(
-                                Icons.delete,
-                                color: Colors.red,
+                          borderRadius: BorderRadius.all(Radius.circular(100)),
+                        ),
+                      ),
+                    ),
+                    Center(
+                      child: Container(
+                        margin: const EdgeInsets.only(top: 20),
+                        child: Column(
+                          children: [
+                            Text(
+                              _userModel!.pseudo,
+                              style: GoogleFonts.robotoCondensed(
+                                fontSize: 60,
+                                color: Colors.black,
                               ),
                             ),
-                          )
+                          ],
+                        ),
+                      ),
+                    ),
+                    SizedBox(
+                      height: 300,
+                      child: Accordion(
+                        maxOpenSections: 1,
+                        headerBackgroundColorOpened: Colors.black54,
+                        headerPadding: const EdgeInsets.symmetric(
+                            vertical: 7, horizontal: 15),
+                        children: [
+                          AccordionSection(
+                            isOpen: false,
+                            leftIcon:
+                                const Icon(Icons.list, color: Colors.white),
+                            headerBackgroundColor: Colors.black,
+                            headerBackgroundColorOpened:
+                                Color.fromARGB(255, 0, 95, 0),
+                            header: Text(
+                              "Mes informations personelles",
+                              style: GoogleFonts.robotoCondensed(
+                                fontSize: 20,
+                                color: Colors.white,
+                              ),
+                            ),
+                            content: Column(
+                              children: [
+                                Container(
+                                  child: Row(
+                                    children: [
+                                      Container(
+                                        margin: EdgeInsets.all(10),
+                                        child: Center(
+                                          child: Text(
+                                            'Mon mail :',
+                                            style: GoogleFonts.robotoCondensed(
+                                              fontSize: 20,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Container(
+                                        margin: EdgeInsets.all(10),
+                                        child: Center(
+                                          child: Text(
+                                            _userModel!.email,
+                                            style: GoogleFonts.robotoCondensed(
+                                              fontSize: 14,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Row(
+                                  children: [
+                                    Container(
+                                      margin: EdgeInsets.all(10),
+                                      child: Text(
+                                        'Mon pseudo :',
+                                        style: GoogleFonts.robotoCondensed(
+                                          fontSize: 20,
+                                        ),
+                                      ),
+                                    ),
+                                    Container(
+                                      margin: EdgeInsets.all(10),
+                                      child: Text(
+                                        _userModel!.pseudo,
+                                        style: GoogleFonts.robotoCondensed(
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    Container(
+                                      margin: EdgeInsets.all(10),
+                                      child: Text(
+                                        'Mon numéro de téléphone :',
+                                        style: GoogleFonts.robotoCondensed(
+                                          fontSize: 20,
+                                        ),
+                                      ),
+                                    ),
+                                    Container(
+                                      margin: EdgeInsets.all(10),
+                                      child: Text(
+                                        _userModel!.phone,
+                                        style: GoogleFonts.robotoCondensed(
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Row(
+                                  children: [
+                                    Container(
+                                      margin: EdgeInsets.all(10),
+                                      child: Text(
+                                        'Ma photo :',
+                                        style: GoogleFonts.robotoCondensed(
+                                          fontSize: 20,
+                                        ),
+                                      ),
+                                    ),
+                                    Container(
+                                      margin: EdgeInsets.all(10),
+                                      child: Text(
+                                        _userModel!.avatar,
+                                        style: GoogleFonts.robotoCondensed(
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                OpenContainer<bool>(
+                                  transitionType: _transitionType,
+                                  transitionDuration:
+                                      Duration(milliseconds: 600),
+                                  openBuilder: (BuildContext _,
+                                      VoidCallback openContainer) {
+                                    return UpdateUser(
+                                      userId: _userModel!.id.toString(),
+                                      email: _userModel!.email,
+                                      password: _userModel!.password,
+                                      avatar: _userModel!.avatar,
+                                      pseudo: _userModel!.pseudo,
+                                      phone: _userModel!.phone,
+                                    );
+                                  },
+                                  closedShape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(32),
+                                    side: BorderSide(
+                                        color: Colors.black, width: 1),
+                                  ),
+                                  closedElevation: 0.0,
+                                  closedBuilder: (BuildContext _,
+                                      VoidCallback openContainer) {
+                                    return Container(
+                                      width: 200,
+                                      child: Center(
+                                        child: Text(
+                                          'Modifier mes informations',
+                                          style: GoogleFonts.robotoCondensed(
+                                            fontSize: 15,
+                                          ),
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                )
+                              ],
+                            ),
+                          ),
+                          AccordionSection(
+                            isOpen: false,
+                            leftIcon:
+                                const Icon(Icons.list, color: Colors.white),
+                            headerBackgroundColor: Colors.black,
+                            headerBackgroundColorOpened:
+                                Color.fromARGB(255, 0, 95, 0),
+                            header: Text(
+                              "Mes commandes",
+                              style: GoogleFonts.robotoCondensed(
+                                fontSize: 20,
+                                color: Colors.white,
+                              ),
+                            ),
+                            content: Container(
+                              child: SizedBox(
+                                height: 300,
+                                child: ListView.builder(
+                                  itemCount: _orderModel!.length,
+                                  itemBuilder: ((context, index) => Container(
+                                        decoration: const BoxDecoration(
+                                          border: Border(
+                                            bottom: BorderSide(
+                                                width: 1.0,
+                                                color: Color.fromARGB(
+                                                    255, 209, 209, 209)),
+                                          ),
+                                        ),
+                                        child: Column(
+                                          children: [
+                                            Center(
+                                                child: Text('Commande n°' +
+                                                    _orderModel!.length
+                                                        .toString())),
+                                            Column(
+                                              children: [
+                                                for (var i = 0;
+                                                    i <
+                                                        _orderModel![index]
+                                                            .printing
+                                                            .length;
+                                                    i++)
+                                                  Container(
+                                                    margin: EdgeInsets.all(10),
+                                                    child: Row(
+                                                      mainAxisAlignment:
+                                                          MainAxisAlignment
+                                                              .spaceAround,
+                                                      children: [
+                                                        Container(
+                                                          width: 150,
+                                                          height: 70,
+                                                          decoration:
+                                                              const BoxDecoration(
+                                                            image:
+                                                                DecorationImage(
+                                                              alignment:
+                                                                  Alignment
+                                                                      .center,
+                                                              matchTextDirection:
+                                                                  true,
+                                                              repeat:
+                                                                  ImageRepeat
+                                                                      .noRepeat,
+                                                              fit: BoxFit.cover,
+                                                              image: AssetImage(
+                                                                  'assets/images/image6.jpg'),
+                                                            ),
+                                                            borderRadius:
+                                                                BorderRadius
+                                                                    .all(Radius
+                                                                        .circular(
+                                                                            7)),
+                                                          ),
+                                                        ),
+                                                        Text(_orderModel![index]
+                                                            .printing[i]
+                                                            .title),
+                                                        Text(_orderModel![index]
+                                                                .printing[i]
+                                                                .default_size
+                                                                .toString() +
+                                                            ' cm'),
+                                                        Text(_orderModel![index]
+                                                                .printing[i]
+                                                                .default_weight
+                                                                .toString() +
+                                                            ' g'),
+                                                        Text(_orderModel![index]
+                                                            .billing_address),
+                                                        Text(_orderModel![index]
+                                                            .delivery_address),
+                                                      ],
+                                                    ),
+                                                  )
+                                              ],
+                                            ),
+                                          ],
+                                        ),
+                                      )),
+                                ),
+                              ),
+                            ),
+                          ),
                         ],
                       ),
                     ),
-                ],
+                    Container(
+                      child: TextButton(
+                        onPressed: () {
+                          UserService().logout();
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => CategoryPageDesktop()),
+                          );
+                        },
+                        child: Text(
+                          "Déconnexion",
+                          style: GoogleFonts.robotoCondensed(
+                            fontSize: 25,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ),
+                    )
+                  ],
+                ),
               ),
             ),
-            Accordion(
-              maxOpenSections: 2,
-              headerBackgroundColorOpened: Colors.black54,
-              headerPadding:
-                  const EdgeInsets.symmetric(vertical: 7, horizontal: 15),
-              children: [
-                AccordionSection(
-                  isOpen: false,
-                  leftIcon: const Icon(Icons.add, color: Colors.white),
-                  headerBackgroundColor: Colors.black,
-                  headerBackgroundColorOpened: Color.fromARGB(255, 43, 0, 235),
-                  header: const Text(
-                    "Ajout d'un objet",
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  content: Column(
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.all(5),
-                        child: const TextField(
-                          obscureText: true,
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            labelText: "Nom de l'object",
-                            labelStyle:
-                                TextStyle(color: Colors.black, fontSize: 10),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        margin: const EdgeInsets.all(5),
-                        child: const TextField(
-                          obscureText: true,
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            labelText: "Description de l'object",
-                            labelStyle:
-                                TextStyle(color: Colors.black, fontSize: 10),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        margin: const EdgeInsets.all(5),
-                        child: const TextField(
-                          obscureText: true,
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            labelText: "Image de l'object",
-                            labelStyle:
-                                TextStyle(color: Colors.black, fontSize: 10),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        margin: const EdgeInsets.all(5),
-                        child: const TextField(
-                          obscureText: true,
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            labelText: "Longueur proposé",
-                            labelStyle:
-                                TextStyle(color: Colors.black, fontSize: 10),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        margin: const EdgeInsets.all(5),
-                        child: const TextField(
-                          obscureText: true,
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            labelText: "Couleur proposé",
-                            labelStyle:
-                                TextStyle(color: Colors.black, fontSize: 10),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        margin: const EdgeInsets.all(5),
-                        child: const TextField(
-                          obscureText: true,
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            labelText: "Format de l'object",
-                            labelStyle:
-                                TextStyle(color: Colors.black, fontSize: 10),
-                          ),
-                        ),
-                      ),
-                      Container(
-                        margin: const EdgeInsets.all(5),
-                        child: const TextField(
-                          obscureText: true,
-                          decoration: InputDecoration(
-                            border: OutlineInputBorder(),
-                            labelText: "Type de plastique",
-                            labelStyle:
-                                TextStyle(color: Colors.black, fontSize: 10),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  contentHorizontalPadding: 20,
-                  contentBorderWidth: 1,
-                ),
-              ],
-            ),
-            Container(
-              margin: EdgeInsets.all(12),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: const [
-                  Text(
-                    'Mes ventes',
-                    style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 15,
-                        fontWeight: FontWeight.bold),
-                  ),
-                ],
-              ),
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Container(
-                  margin: const EdgeInsets.all(10),
-                  decoration: const BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(15)),
-                    color: Color.fromARGB(174, 0, 0, 0),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.all(10),
-                        child: const Text(
-                          'Total des ventes',
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                      Container(
-                        margin: const EdgeInsets.all(10),
-                        child: const Text(
-                          '1020€',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                Container(
-                  margin: const EdgeInsets.all(10),
-                  decoration: const BoxDecoration(
-                    borderRadius: BorderRadius.all(Radius.circular(15)),
-                    color: Color.fromARGB(174, 0, 0, 0),
-                  ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      Container(
-                        margin: const EdgeInsets.all(10),
-                        child: const Text(
-                          'Produits vendus',
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                      Container(
-                        margin: const EdgeInsets.all(10),
-                        child: const Text(
-                          '19',
-                          style: TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            )
-          ]),
-        ),
-      ),
     );
   }
 }

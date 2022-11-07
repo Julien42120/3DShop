@@ -1,3 +1,4 @@
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/Category/list-categories-page-desktop.dart';
@@ -16,7 +17,7 @@ class FirstPageDesktop extends StatelessWidget {
           matchTextDirection: true,
           repeat: ImageRepeat.noRepeat,
           fit: BoxFit.cover,
-          image: AssetImage('assets/images/galaxy.png'),
+          image: AssetImage('assets/images/background.jpg'),
         ),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -25,7 +26,7 @@ class FirstPageDesktop extends StatelessWidget {
         children: [
           Container(
             height: 500,
-            margin: EdgeInsets.only(top: 50),
+            margin: EdgeInsets.only(top: 70),
             decoration: const BoxDecoration(
               image: DecorationImage(
                 fit: BoxFit.fitHeight,
@@ -38,7 +39,7 @@ class FirstPageDesktop extends StatelessWidget {
           ),
           OpenContainer<bool>(
             transitionType: _transitionType,
-            transitionDuration: Duration(milliseconds: 1400),
+            transitionDuration: Duration(milliseconds: 600),
             openBuilder: (BuildContext _, VoidCallback openContainer) {
               return CategoryPageDesktop();
             },
@@ -49,20 +50,23 @@ class FirstPageDesktop extends StatelessWidget {
             closedElevation: 0.0,
             closedBuilder: (BuildContext _, VoidCallback openContainer) {
               return Container(
+                color: Colors.white,
                 width: 200,
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
                       'Visitez',
-                      style: GoogleFonts.lobster(
-                        fontSize: 35,
-                      ),
+                      style: GoogleFonts.robotoCondensed(
+                          fontSize: 35, color: Colors.black),
                     ),
                     Container(
                       margin: const EdgeInsets.only(top: 7, left: 15),
-                      child: const Icon(Icons.arrow_forward_rounded),
-                    )
+                      child: const Icon(
+                        Icons.arrow_forward_rounded,
+                        color: Colors.black,
+                      ),
+                    ),
                   ],
                 ),
               );

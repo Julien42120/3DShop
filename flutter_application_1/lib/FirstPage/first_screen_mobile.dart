@@ -15,7 +15,7 @@ class FirstPageMobile extends StatelessWidget {
           matchTextDirection: true,
           repeat: ImageRepeat.noRepeat,
           fit: BoxFit.cover,
-          image: AssetImage('assets/images/galaxy.png'),
+          image: AssetImage('assets/images/background.jpg'),
         ),
       ),
       padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -37,7 +37,7 @@ class FirstPageMobile extends StatelessWidget {
           ),
           OpenContainer<bool>(
             transitionType: _transitionType,
-            transitionDuration: Duration(milliseconds: 1400),
+            transitionDuration: Duration(milliseconds: 600),
             openBuilder: (BuildContext _, VoidCallback openContainer) {
               return CategoryPageMobile();
             },
@@ -54,7 +54,7 @@ class FirstPageMobile extends StatelessWidget {
                   children: [
                     Text(
                       'Visitez',
-                      style: GoogleFonts.lobster(
+                      style: GoogleFonts.robotoCondensed(
                         fontSize: 35,
                       ),
                     ),
