@@ -15,6 +15,13 @@ Print _$PrintFromJson(Map<String, dynamic> json) => Print(
       price: json['price'] as int,
       default_size: json['default_size'] as int,
       default_weight: json['default_weight'] as int,
+      default_material: json['default_material'] == null
+          ? null
+          : MaterialPrint.fromJson(
+              json['default_material'] as Map<String, dynamic>),
+      imagePrintings: (json['imagePrintings'] as List<dynamic>)
+          .map((e) => ImagePrint.fromJson(e as Map<String, dynamic>))
+          .toList(),
     );
 
 Map<String, dynamic> _$PrintToJson(Print instance) => <String, dynamic>{
@@ -26,4 +33,6 @@ Map<String, dynamic> _$PrintToJson(Print instance) => <String, dynamic>{
       'price': instance.price,
       'default_size': instance.default_size,
       'default_weight': instance.default_weight,
+      'default_material': instance.default_material,
+      'imagePrintings': instance.imagePrintings,
     };

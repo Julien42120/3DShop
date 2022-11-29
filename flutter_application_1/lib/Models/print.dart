@@ -1,3 +1,5 @@
+import 'package:flutter_application_1/Models/imagePrint.dart';
+import 'package:flutter_application_1/Models/material.dart';
 import 'package:flutter_application_1/Models/user.dart';
 import 'package:json_annotation/json_annotation.dart';
 part 'print.g.dart';
@@ -12,6 +14,8 @@ class Print {
   int price;
   int default_size;
   int default_weight;
+  MaterialPrint? default_material;
+  List<ImagePrint> imagePrintings;
 
   Print({
     required this.id,
@@ -22,6 +26,8 @@ class Print {
     required this.price,
     required this.default_size,
     required this.default_weight,
+    required this.default_material,
+    required this.imagePrintings,
   });
 
   factory Print.fromJson(Map<String, dynamic> json) => _$PrintFromJson(json);

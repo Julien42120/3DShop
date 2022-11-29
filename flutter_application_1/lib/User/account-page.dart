@@ -1,13 +1,13 @@
 import 'package:accordion/accordion.dart';
-import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/Category/list-categories-page-desktop.dart';
 import 'package:flutter_application_1/Models/order.dart';
 import 'package:flutter_application_1/Models/user.dart';
 import 'package:flutter_application_1/Services/user_service.dart';
-import 'package:flutter_application_1/User/register-page-desktop.dart';
+import 'package:flutter_application_1/User/log-in-page-desktop.dart';
 import 'package:flutter_application_1/User/update_user.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AccountPage extends StatefulWidget {
@@ -56,14 +56,8 @@ class _AccountPageState extends State<AccountPage> {
                   fontSize: 30,
                   color: Colors.black,
                 ),
-                child: AnimatedTextKit(
-                  totalRepeatCount: 1,
-                  animatedTexts: [
-                    TyperAnimatedText(
-                      'Mon Profil',
-                      speed: Duration(milliseconds: 230),
-                    ),
-                  ],
+                child: Text(
+                  'Mon Profil',
                 ),
               ),
             )),
@@ -409,7 +403,7 @@ class _AccountPageState extends State<AccountPage> {
                     ),
                     Container(
                       child: TextButton(
-                        onPressed: () {
+                        onPressed: () async {
                           UserService().logout();
                           Navigator.push(
                             context,

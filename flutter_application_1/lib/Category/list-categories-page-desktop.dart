@@ -1,14 +1,9 @@
-import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/Models/category.dart';
-import 'package:flutter_application_1/Models/print.dart';
 import 'package:flutter_application_1/Product/list-products-page-desktop.dart';
 import 'package:flutter_application_1/Services/category_service.dart';
-import 'package:flutter_application_1/Services/print_service.dart';
-import 'package:flutter_application_1/Services/user_service.dart';
-import 'package:flutter_application_1/User/account-page.dart';
-import 'package:flutter_application_1/User/register-page-desktop.dart';
+import 'package:flutter_application_1/navBar.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -21,7 +16,7 @@ class CategoryPageDesktop extends StatefulWidget {
 class _CategoryListState extends State<CategoryPageDesktop> {
   late List<Category>? _categoryModel = [];
   ContainerTransitionType _transitionType = ContainerTransitionType.fade;
-  String? userConnected;
+
   @override
   void initState() {
     super.initState();
@@ -31,7 +26,7 @@ class _CategoryListState extends State<CategoryPageDesktop> {
   void _getData() async {
     // ignore prefer_conditional_assignment
     _categoryModel = await CategoryService().getCategoriesList();
-    userConnected = await UserService().storage.read(key: 'token');
+
     setState(() {});
   }
 
@@ -40,75 +35,7 @@ class _CategoryListState extends State<CategoryPageDesktop> {
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(60),
-        child: Container(
-          decoration: const BoxDecoration(color: Colors.white),
-          child: AppBar(
-            iconTheme: IconThemeData(
-              color: Colors.black,
-            ),
-            title: Center(
-                child: DefaultTextStyle(
-              style: GoogleFonts.robotoCondensed(
-                fontSize: 30,
-                color: Colors.black,
-              ),
-              child: AnimatedTextKit(
-                totalRepeatCount: 1,
-                animatedTexts: [
-                  TyperAnimatedText(
-                    'Catégory',
-                    speed: Duration(milliseconds: 230),
-                  ),
-                ],
-              ),
-            )),
-            actions: [
-              // if (userConnected == null)
-              OpenContainer<bool>(
-                closedColor: Colors.transparent,
-                openColor: Colors.transparent,
-                transitionType: _transitionType,
-                transitionDuration: Duration(milliseconds: 600),
-                openBuilder: (BuildContext _, VoidCallback openContainer) {
-                  return RegisterPageDesktop();
-                },
-                closedElevation: 0.0,
-                closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                  return Container(
-                    margin: const EdgeInsets.only(right: 30),
-                    child: const Icon(
-                      Icons.person_add,
-                      size: 40,
-                      color: Colors.black,
-                    ),
-                  );
-                },
-              )
-              // else
-              //   OpenContainer<bool>(
-              //     closedColor: Colors.transparent,
-              //     openColor: Colors.transparent,
-              //     transitionType: _transitionType,
-              //     transitionDuration: Duration(milliseconds: 600),
-              //     openBuilder: (BuildContext _, VoidCallback openContainer) {
-              //       return AccountPage();
-              //     },
-              //     closedElevation: 0.0,
-              //     closedBuilder: (BuildContext _, VoidCallback openContainer) {
-              //       return Container(
-              //         margin: const EdgeInsets.only(right: 30),
-              //         child: const Icon(
-              //           Icons.person,
-              //           size: 40,
-              //           color: Colors.black,
-              //         ),
-              //       );
-              //     },
-              //   ),
-            ],
-            backgroundColor: Colors.white,
-          ),
-        ),
+        child: CustomAppBarDesktop(),
       ),
       body: _categoryModel == null
           ? const Center(
@@ -182,11 +109,12 @@ class _CategoryListState extends State<CategoryPageDesktop> {
                                     Container(
                                       margin: const EdgeInsets.all(10),
                                       child: Text(
-                                          _categoryModel![index].category,
-                                          style: GoogleFonts.robotoCondensed(
-                                            fontSize: 30,
-                                            color: Colors.white,
-                                          )),
+                                        _categoryModel![index].category,
+                                        style: GoogleFonts.robotoCondensed(
+                                          fontSize: 30,
+                                          color: Colors.white,
+                                        ),
+                                      ),
                                     ),
                                   ],
                                 ),

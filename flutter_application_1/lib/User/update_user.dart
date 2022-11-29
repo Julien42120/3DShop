@@ -1,11 +1,8 @@
-// ignore: file_names
-import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/Models/user.dart';
 import 'package:flutter_application_1/Services/user_service.dart';
 import 'package:flutter_application_1/User/account-page.dart';
-import 'package:flutter_application_1/User/log-in-page-desktop.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class UpdateUser extends StatefulWidget {
@@ -69,14 +66,8 @@ class _UpdateUserState extends State<UpdateUser> {
                     fontSize: 30,
                     color: Colors.black,
                   ),
-                  child: AnimatedTextKit(
-                    totalRepeatCount: 1,
-                    animatedTexts: [
-                      TyperAnimatedText(
-                        'Modifier mes infos',
-                        speed: Duration(milliseconds: 230),
-                      ),
-                    ],
+                  child: Text(
+                    'Modifier mes infos',
                   ),
                 ),
               ),

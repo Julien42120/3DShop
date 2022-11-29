@@ -1,10 +1,10 @@
-import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/Models/imagePrint.dart';
 import 'package:flutter_application_1/Models/print.dart';
 import 'package:flutter_application_1/Product/config-product-page.dart';
 import 'package:flutter_application_1/Services/print_service.dart';
-import 'package:flutter_application_1/User/register-page-desktop.dart';
+import 'package:flutter_application_1/navBar.dart';
 import 'package:flutter_staggered_animations/flutter_staggered_animations.dart';
 import 'package:google_fonts/google_fonts.dart';
 
@@ -24,6 +24,7 @@ class ProductsPageDesktop extends StatefulWidget {
 class _ProductsPageDesktopState extends State<ProductsPageDesktop> {
   late List<Print> _printModel = [];
   final ContainerTransitionType _transitionType = ContainerTransitionType.fade;
+  late List<ImagePrint>? imagesPrint = [];
 
   @override
   void initState() {
@@ -33,7 +34,6 @@ class _ProductsPageDesktopState extends State<ProductsPageDesktop> {
 
   void _getData() async {
     _printModel = await PrintService().getPrintByCategory(widget.categoryID);
-
     setState(() {});
   }
 
@@ -42,55 +42,9 @@ class _ProductsPageDesktopState extends State<ProductsPageDesktop> {
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(60),
-        child: Container(
-          decoration: const BoxDecoration(color: Colors.white),
-          child: AppBar(
-            iconTheme: IconThemeData(
-              color: Colors.black, //change your color here
-            ),
-            title: Center(
-                child: DefaultTextStyle(
-              style: GoogleFonts.robotoCondensed(
-                fontSize: 30,
-                color: Colors.black,
-              ),
-              child: AnimatedTextKit(
-                totalRepeatCount: 1,
-                animatedTexts: [
-                  TyperAnimatedText(
-                    widget.nameOfCategory,
-                    speed: Duration(milliseconds: 230),
-                  ),
-                ],
-              ),
-            )),
-            actions: [
-              OpenContainer<bool>(
-                closedColor: Colors.transparent,
-                openColor: Colors.transparent,
-                transitionType: _transitionType,
-                transitionDuration: Duration(milliseconds: 600),
-                openBuilder: (BuildContext _, VoidCallback openContainer) {
-                  return RegisterPageDesktop();
-                },
-                closedElevation: 0.0,
-                closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                  return Container(
-                    margin: const EdgeInsets.only(right: 30),
-                    child: const Icon(
-                      Icons.person_add,
-                      size: 40,
-                      color: Colors.black,
-                    ),
-                  );
-                },
-              ),
-            ],
-            backgroundColor: Colors.white,
-          ),
-        ),
+        child: CustomAppBarDesktop(),
       ),
-      body: _printModel == null
+      body: _printModel.length == 0
           ? const Center(
               child: CircularProgressIndicator(),
             )
@@ -132,15 +86,16 @@ class _ProductsPageDesktopState extends State<ProductsPageDesktop> {
                         child: FadeInAnimation(
                           child: Container(
                             margin: const EdgeInsets.all(25),
-                            decoration: const BoxDecoration(
+                            decoration: BoxDecoration(
                               image: DecorationImage(
                                 alignment: Alignment.center,
                                 matchTextDirection: true,
                                 repeat: ImageRepeat.noRepeat,
                                 fit: BoxFit.cover,
-                                image: AssetImage('assets/images/image4.jpg'),
+                                image: NetworkImage(
+                                    _printModel[index].imagePrintings[0].image),
                               ),
-                              boxShadow: [
+                              boxShadow: const [
                                 BoxShadow(
                                   offset: Offset(8, 8),
                                   spreadRadius: -6,

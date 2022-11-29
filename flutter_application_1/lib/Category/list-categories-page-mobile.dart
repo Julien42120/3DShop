@@ -1,14 +1,12 @@
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/Models/category.dart';
-import 'package:flutter_application_1/Product/list-products-page-desktop.dart';
+import 'package:flutter_application_1/Paiment/cart_screen.dart';
 import 'package:flutter_application_1/Product/list-products-page-mobile.dart';
 import 'package:flutter_application_1/Services/category_service.dart';
-import 'package:flutter_application_1/User/account-page.dart';
 import 'package:flutter_application_1/User/register-page-desktop.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:google_fonts/google_fonts.dart';
-import '../Paiment/cart-page.dart';
 
 // ignore: use_key_in_widget_constructors
 class CategoryPageMobile extends StatefulWidget {
@@ -52,7 +50,7 @@ class _CategoryListState extends State<CategoryPageMobile> {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => const CartPage()),
+                  MaterialPageRoute(builder: (context) => CartScreen()),
                 );
               }),
           SpeedDialChild(

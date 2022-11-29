@@ -1,15 +1,17 @@
-import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:animations/animations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/Models/imagePrint.dart';
 import 'package:flutter_application_1/Models/material.dart';
 import 'package:flutter_application_1/Models/print.dart';
-import 'package:flutter_application_1/Services/cart_print_service.dart';
+import 'package:flutter_application_1/Models/productVM.dart';
+import 'package:flutter_application_1/Services/cart_service.dart';
+import 'package:flutter_application_1/Services/config_service.dart';
 import 'package:flutter_application_1/Services/material_service.dart';
 import 'package:flutter_application_1/Services/print_service.dart';
-import 'package:flutter_application_1/User/register-page-desktop.dart';
+import 'package:flutter_application_1/navBar.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:provider/provider.dart';
 
 class ConfigProductPage extends StatefulWidget {
   String printId;
@@ -23,14 +25,18 @@ class _ConfigProductPageState extends State<ConfigProductPage> {
   late List<MaterialPrint>? listmaterial = [];
   Print? printing;
   late List<ImagePrint>? imagesPrint = [];
-  late Print printId;
+  late String actualPrintId;
+  Future<int>? _price;
+  String? userConnectedId;
 
   PrintService printService = PrintService();
   MaterialService materialService = MaterialService();
+  ConfigService configService = ConfigService();
   CartService cartService = CartService();
   ContainerTransitionType _transitionType = ContainerTransitionType.fade;
 
   MaterialPrint? selectedValue;
+  late String selectedValueId;
   List<MaterialPrint> itemsValues = [];
 
   @override
@@ -40,6 +46,7 @@ class _ConfigProductPageState extends State<ConfigProductPage> {
   }
 
   void _getData() async {
+    actualPrintId = widget.printId.toString();
     printing = await printService.getPrintById(widget.printId);
     listmaterial = await materialService.getMaterialList();
     imagesPrint = await printService.getImagesPrint(widget.printId);
@@ -47,61 +54,21 @@ class _ConfigProductPageState extends State<ConfigProductPage> {
     for (var i = 0; i < listmaterial!.length; i++) {
       itemsValues.add(listmaterial![i]);
     }
+    _price = Future<int>.delayed(
+        const Duration(seconds: 2), (() => printing!.price));
+
+    userConnectedId = await storage.read(key: 'userID');
     setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
+    double height = MediaQuery.of(context).size.height;
+    double width = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(60),
-        child: Container(
-          decoration: const BoxDecoration(color: Colors.white),
-          child: AppBar(
-            iconTheme: IconThemeData(
-              color: Colors.black, //change your color here
-            ),
-            title: Center(
-                child: DefaultTextStyle(
-              style: GoogleFonts.robotoCondensed(
-                fontSize: 30,
-                color: Colors.black,
-              ),
-              child: AnimatedTextKit(
-                totalRepeatCount: 1,
-                animatedTexts: [
-                  TyperAnimatedText(
-                    'Configuration ',
-                    speed: Duration(milliseconds: 230),
-                  ),
-                ],
-              ),
-            )),
-            actions: [
-              OpenContainer<bool>(
-                closedColor: Colors.transparent,
-                openColor: Colors.transparent,
-                transitionType: _transitionType,
-                transitionDuration: Duration(milliseconds: 1400),
-                openBuilder: (BuildContext _, VoidCallback openContainer) {
-                  return RegisterPageDesktop();
-                },
-                closedElevation: 0.0,
-                closedBuilder: (BuildContext _, VoidCallback openContainer) {
-                  return Container(
-                    margin: const EdgeInsets.only(right: 30),
-                    child: const Icon(
-                      Icons.person_add,
-                      size: 40,
-                      color: Colors.white,
-                    ),
-                  );
-                },
-              ),
-            ],
-            backgroundColor: Colors.white,
-          ),
-        ),
+        child: CustomAppBarDesktop(),
       ),
       // ignore: unnecessary_null_comparison
       body: printing == null
@@ -129,7 +96,6 @@ class _ConfigProductPageState extends State<ConfigProductPage> {
                           return Container(
                             width: MediaQuery.of(context).size.width,
                             margin: EdgeInsets.symmetric(horizontal: 5.0),
-                            decoration: BoxDecoration(color: Colors.amber),
                             child: Image.network(
                               i.image,
                               fit: BoxFit.cover,
@@ -140,235 +106,361 @@ class _ConfigProductPageState extends State<ConfigProductPage> {
                     }).toList(),
                   ),
                   Container(
-                    margin: EdgeInsets.all(40),
-                    child: Column(children: [
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Column(
-                            children: [
-                              Text(
-                                printing!.title,
-                                style: GoogleFonts.robotoCondensed(
-                                  fontSize: 45,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.black,
-                                ),
-                              ),
-                              Row(
-                                children: [
-                                  Container(
-                                    margin: EdgeInsets.only(top: 2),
-                                    child: Text(
-                                      'Proposé par: ',
-                                      style: GoogleFonts.robotoCondensed(
-                                        fontSize: 14,
-                                        color: Colors.black,
-                                      ),
-                                    ),
-                                  ),
-                                  Text(
-                                    printing!.user.pseudo,
-                                    style: GoogleFonts.robotoCondensed(
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.bold,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ],
-                              )
-                            ],
-                          ),
-                          Column(
-                            children: [
-                              Container(
-                                margin: EdgeInsets.only(right: 20),
-                                width: 70,
-                                height: 70,
-                                decoration: BoxDecoration(
-                                  image: DecorationImage(
-                                    alignment: Alignment.center,
-                                    matchTextDirection: true,
-                                    repeat: ImageRepeat.noRepeat,
-                                    fit: BoxFit.cover,
-                                    image: NetworkImage(printing!.user.avatar),
-                                  ),
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(100)),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(top: 40),
-                        child: Text(
-                          printing!.description,
-                          style: GoogleFonts.robotoCondensed(
-                            fontSize: 17,
-                            color: Colors.black,
-                          ),
-                        ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(top: 35),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    padding:
+                        const EdgeInsets.only(left: 40, right: 40, top: 80),
+                    decoration:
+                        BoxDecoration(color: Color.fromARGB(83, 70, 173, 19)),
+                    child: Column(
+                      children: [
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                            Row(
-                              children: [
-                                Container(
-                                  child: Text(
-                                    'Taille: ',
-                                    style: GoogleFonts.robotoCondensed(
-                                      fontSize: 17,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  child: Text(
-                                    printing!.default_size.toString() + ' cm',
-                                    style: GoogleFonts.robotoCondensed(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                            Row(
-                              children: [
-                                Container(
-                                  child: Text(
-                                    'Poids: ',
-                                    style: GoogleFonts.robotoCondensed(
-                                      fontSize: 17,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ),
-                                Container(
-                                  child: Text(
-                                    printing!.default_weight.toString() +
-                                        ' grammes',
-                                    style: GoogleFonts.robotoCondensed(
-                                      fontWeight: FontWeight.bold,
-                                      fontSize: 16,
-                                      color: Colors.black,
-                                    ),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
-                      ),
-                      Container(
-                        margin: EdgeInsets.only(top: 30, bottom: 30),
-                        child: Column(
-                          children: [
-                            Container(
-                              child: Row(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(Icons.warning),
-                                    Text(
-                                      'Tout changement de couleur aura des coups supplémentaires',
-                                      style: GoogleFonts.robotoCondensed(
-                                        fontSize: 12,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.black,
-                                      ),
-                                    )
-                                  ]),
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Choisir une couleur : ',
+                                  printing!.title,
                                   style: GoogleFonts.robotoCondensed(
-                                    fontSize: 15,
+                                    fontSize: 45,
                                     fontWeight: FontWeight.bold,
                                     color: Colors.black,
                                   ),
                                 ),
-                                DropdownButton(
-                                  value: selectedValue,
-                                  items: itemsValues.map((item) {
-                                    return DropdownMenuItem(
-                                      child: Text(item.color),
-                                      value: item,
-                                    );
-                                  }).toList(),
-                                  onChanged: (value) async {
-                                    setState(() {
-                                      selectedValue = value as MaterialPrint?;
-                                    });
-                                    await cartService.postConfig(
-                                        printing, selectedValue);
-                                  },
+                                Row(
+                                  children: [
+                                    Container(
+                                      margin: EdgeInsets.only(top: 2),
+                                      child: Text(
+                                        'Proposé par: ',
+                                        style: GoogleFonts.robotoCondensed(
+                                          fontSize: 14,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                    ),
+                                    Text(
+                                      printing!.user.pseudo,
+                                      style: GoogleFonts.robotoCondensed(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ],
+                                )
+                              ],
+                            ),
+                            Column(
+                              children: [
+                                Container(
+                                  margin: EdgeInsets.only(right: 20),
+                                  width: 70,
+                                  height: 70,
+                                  decoration: BoxDecoration(
+                                    image: DecorationImage(
+                                      alignment: Alignment.center,
+                                      matchTextDirection: true,
+                                      repeat: ImageRepeat.noRepeat,
+                                      fit: BoxFit.cover,
+                                      image:
+                                          NetworkImage(printing!.user.avatar),
+                                    ),
+                                    borderRadius:
+                                        BorderRadius.all(Radius.circular(100)),
+                                  ),
                                 ),
                               ],
                             ),
                           ],
                         ),
-                      ),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: [
-                          Row(
+                        Container(
+                          margin: EdgeInsets.only(top: 55),
+                          child: Row(
                             children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment:
+                                    MainAxisAlignment.spaceAround,
+                                children: [
+                                  Container(
+                                    margin: EdgeInsets.symmetric(vertical: 7),
+                                    child: Row(
+                                      children: [
+                                        Container(
+                                          child: Text(
+                                            'Taille: ',
+                                            style: GoogleFonts.robotoCondensed(
+                                              fontSize: 17,
+                                              color: Colors.black,
+                                            ),
+                                          ),
+                                        ),
+                                        Text(
+                                          printing!.default_size.toString() +
+                                              ' cm',
+                                          style: GoogleFonts.robotoCondensed(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                  Row(
+                                    children: [
+                                      Container(
+                                        child: Text(
+                                          'Poids: ',
+                                          style: GoogleFonts.robotoCondensed(
+                                            fontSize: 17,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ),
+                                      Container(
+                                        child: Text(
+                                          printing!.default_weight.toString() +
+                                              ' grammes',
+                                          style: GoogleFonts.robotoCondensed(
+                                            fontWeight: FontWeight.bold,
+                                            fontSize: 16,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
                               Container(
-                                margin: EdgeInsets.only(top: 10),
+                                width:
+                                    width * 0.26, //width t 70% of screen width
+                                margin: EdgeInsets.symmetric(horizontal: 50),
                                 child: Text(
-                                  'Prix de base : ',
+                                  printing!.description,
                                   style: GoogleFonts.robotoCondensed(
                                     fontSize: 17,
                                     color: Colors.black,
                                   ),
                                 ),
                               ),
-                              Container(
-                                child: Text(
-                                  printing!.price.toString() + '€',
-                                  style: GoogleFonts.robotoCondensed(
-                                    fontWeight: FontWeight.bold,
-                                    fontSize: 25,
-                                    color: Colors.black,
-                                  ),
-                                ),
-                              ),
                             ],
                           ),
-                          Container(
-                            padding: const EdgeInsets.all(10),
-                            decoration: const BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.all(
-                                Radius.circular(5),
-                              ),
-                            ),
-                            child: Row(
-                              crossAxisAlignment: CrossAxisAlignment.center,
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                TextButton.icon(
-                                    onPressed: () {
-                                      // CartService()
-                                      //     .postConfig(printing, listmaterial);
+                        ),
+                        printing!.default_material != null
+                            ? Container(
+                                margin: EdgeInsets.only(top: 30, bottom: 30),
+                                child: Column(
+                                  children: [
+                                    Row(
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.center,
+                                      children: [
+                                        Text(
+                                          'Choisir une couleur : ',
+                                          style: GoogleFonts.robotoCondensed(
+                                            fontSize: 15,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.black,
+                                          ),
+                                        ),
+                                        DropdownButton(
+                                          value: selectedValue,
+                                          items: itemsValues.map((item) {
+                                            return DropdownMenuItem(
+                                              child: Text(item.color),
+                                              value: item,
+                                            );
+                                          }).toList(),
+                                          onChanged: (value) async {
+                                            setState(() {
+                                              selectedValue =
+                                                  value as MaterialPrint;
+                                              selectedValueId =
+                                                  value.id.toString();
+                                            });
+                                            await configService.postConfig(
+                                                actualPrintId, selectedValueId);
+                                            setState(() {
+                                              _price = configService.postConfig(
+                                                  actualPrintId,
+                                                  selectedValueId);
+                                            });
+                                          },
+                                        ),
+                                      ],
+                                    ),
+                                    Container(
+                                      child: Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.center,
+                                        children: [
+                                          Icon(Icons.warning),
+                                          Text(
+                                            'Tout changement de couleur aura des coups supplémentaires',
+                                            style: GoogleFonts.robotoCondensed(
+                                              fontSize: 12,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.black,
+                                            ),
+                                          )
+                                        ],
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : Container(),
+                        Container(
+                          margin: const EdgeInsets.only(top: 25),
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            children: [
+                              Row(
+                                children: [
+                                  Container(
+                                    margin: const EdgeInsets.only(top: 10),
+                                    child: Text(
+                                      'Prix : ',
+                                      style: GoogleFonts.robotoCondensed(
+                                        fontSize: 17,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                  ),
+                                  FutureBuilder<int>(
+                                    future:
+                                        _price, // a previously-obtained Future<String> or null
+                                    builder: (BuildContext context,
+                                        AsyncSnapshot<int> snapshot) {
+                                      List<Widget> children;
+                                      if (snapshot.hasData) {
+                                        children = <Widget>[
+                                          Container(
+                                            margin:
+                                                const EdgeInsets.only(top: 5),
+                                            child: Text('${snapshot.data}' "€",
+                                                style: const TextStyle(
+                                                  fontSize: 20,
+                                                  fontWeight: FontWeight.bold,
+                                                )),
+                                          ),
+                                        ];
+                                      } else if (snapshot.hasError) {
+                                        children = <Widget>[
+                                          const Icon(
+                                            Icons.error_outline,
+                                            color: Colors.red,
+                                            size: 60,
+                                          ),
+                                          Padding(
+                                            padding:
+                                                const EdgeInsets.only(top: 16),
+                                            child: Text(
+                                                'Error: ${snapshot.error}'),
+                                          ),
+                                        ];
+                                      } else {
+                                        children = const <Widget>[
+                                          SizedBox(
+                                            width: 20,
+                                            height: 20,
+                                            child: CircularProgressIndicator(),
+                                          ),
+                                        ];
+                                      }
+                                      return Center(
+                                        child: Column(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.center,
+                                          children: children,
+                                        ),
+                                      );
                                     },
-                                    icon: Icon(Icons.shopping_bag),
-                                    label: Text('panier'))
-                              ],
-                            ),
-                          )
-                        ],
-                      ),
-                    ]),
+                                  ),
+                                ],
+                              ),
+                              Row(
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Consumer<ProductsVM>(
+                                    builder: (context, value, child) =>
+                                        Material(
+                                      borderRadius: const BorderRadius.all(
+                                        Radius.circular(10),
+                                      ),
+                                      color: const Color.fromARGB(
+                                          255, 65, 197, 69),
+                                      child: InkWell(
+                                        borderRadius: const BorderRadius.all(
+                                          Radius.circular(10),
+                                        ),
+                                        splashColor:
+                                            Colors.red.withOpacity(0.8),
+                                        focusColor:
+                                            Colors.green.withOpacity(0.0),
+                                        hoverColor:
+                                            Color.fromARGB(255, 53, 160, 57),
+                                        onTap: () async {
+                                          value.add(
+                                            printing!.id,
+                                            printing!.category,
+                                            printing!.user,
+                                            printing!.title,
+                                            printing!.description,
+                                            await _price!,
+                                            printing!.default_size,
+                                            printing!.default_weight,
+                                            selectedValue!,
+                                            imagesPrint!,
+                                          );
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(
+                                            const SnackBar(
+                                              content: Text(
+                                                'Produit ajouté',
+                                                style: TextStyle(
+                                                    color: Colors.black),
+                                              ),
+                                              backgroundColor: Color.fromARGB(
+                                                  255, 64, 172, 68),
+                                            ),
+                                          );
+                                        },
+                                        child: Container(
+                                          padding: const EdgeInsets.all(10),
+                                          child: Row(
+                                            children: [
+                                              const Icon(Icons
+                                                  .add_shopping_cart_sharp),
+                                              Container(
+                                                margin: EdgeInsets.symmetric(
+                                                    horizontal: 10),
+                                                child: const Text(
+                                                  "Ajouter au panier",
+                                                  style: TextStyle(
+                                                    color: Color.fromARGB(
+                                                        255, 0, 0, 0),
+                                                    fontSize: 14,
+                                                    fontWeight: FontWeight.bold,
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              )
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
                   )
                 ],
               ),

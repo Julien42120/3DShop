@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:convert';
 import 'package:flutter_application_1/Models/api_response.dart';
 import 'package:flutter_application_1/Models/category.dart';
-import 'package:flutter_application_1/Services/user_service.dart';
 import 'package:http/http.dart' as http;
 
 class CategoryService {
@@ -17,7 +16,6 @@ class CategoryService {
           results.add(Category.fromJson(v));
         });
         print(results);
-
         return results;
       } else {
         throw Exception('Failed to load Categories from API');

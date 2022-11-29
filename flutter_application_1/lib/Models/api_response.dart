@@ -9,5 +9,6 @@ class APIResponse {
   static String modifyUser = '/api/users/';
   static String logout = '/logout';
   static String material = '/api/materials';
-  static String cartPrint = '/api/cart_prints';
+  static String config = '/get_price';
+  static String cart = '/api/carts';
 }
