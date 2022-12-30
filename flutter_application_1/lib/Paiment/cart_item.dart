@@ -85,8 +85,8 @@ class CartItem extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Padding(
-                  padding: const EdgeInsets.all(4.0),
+                const Padding(
+                  padding: EdgeInsets.all(4.0),
                   child: Text(
                     'Couleur :',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),

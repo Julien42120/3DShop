@@ -5,9 +5,7 @@ import 'package:flutter_application_1/Category/list-categories-page-desktop.dart
 import 'package:flutter_application_1/Models/order.dart';
 import 'package:flutter_application_1/Models/user.dart';
 import 'package:flutter_application_1/Services/user_service.dart';
-import 'package:flutter_application_1/User/log-in-page-desktop.dart';
 import 'package:flutter_application_1/User/update_user.dart';
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AccountPage extends StatefulWidget {

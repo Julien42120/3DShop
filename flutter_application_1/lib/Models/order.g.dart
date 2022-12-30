@@ -14,6 +14,7 @@ Order _$OrderFromJson(Map<String, dynamic> json) => Order(
       printing: (json['printing'] as List<dynamic>)
           .map((e) => Print.fromJson(e as Map<String, dynamic>))
           .toList(),
+      final_price: (json['final_price'] as num).toDouble(),
     );
 
 Map<String, dynamic> _$OrderToJson(Order instance) => <String, dynamic>{
@@ -22,4 +23,5 @@ Map<String, dynamic> _$OrderToJson(Order instance) => <String, dynamic>{
       'billing_address': instance.billing_address,
       'delivery_address': instance.delivery_address,
       'printing': instance.printing,
+      'final_price': instance.final_price,
     };

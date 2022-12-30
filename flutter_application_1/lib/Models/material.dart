@@ -9,6 +9,7 @@ class MaterialPrint {
   double density;
   int price_per_kg;
   String color;
+  String image;
 
   MaterialPrint({
     required this.id,
@@ -17,6 +18,7 @@ class MaterialPrint {
     required this.density,
     required this.price_per_kg,
     required this.color,
+    required this.image,
   });
 
   factory MaterialPrint.fromJson(Map<String, dynamic> json) =>

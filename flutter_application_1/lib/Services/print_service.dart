@@ -12,17 +12,13 @@ class PrintService {
   Future<List<Print>> getPrintByCategory(String categoryId) async {
     var url =
         Uri.parse(APIResponse.baseUrl + APIResponse.categoryIdUrl + categoryId);
-    print(url);
     var response = await http.get(url);
-
     if (response.statusCode == 200) {
       var jsonResponse = await json.decode(response.body);
       List<Print> results = [];
-
       jsonResponse['category'].forEach((v) {
         results.add(Print.fromJson(v));
       });
-      print(results);
       return results;
     } else {
       throw Exception('Failed to load Print from API');
@@ -31,17 +27,13 @@ class PrintService {
   }
 
   Future<Print> getPrintById(String printId) async {
-    var token = await storage.read(key: 'token');
+    // var token = await storage.read(key: 'token');
     var url = Uri.parse(APIResponse.baseUrl + APIResponse.printIdUrl + printId);
-    print(url);
     var response = await http.get(url);
     if (response.statusCode == 200) {
       var jsonResponse = await json.decode(response.body);
       var result = jsonResponse['print'];
-
       var printing = result[0];
-
-      print(printing);
       return Print.fromJson(printing);
     } else {
       throw Exception('Failed to load Print by id from API');

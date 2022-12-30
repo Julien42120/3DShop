@@ -3,6 +3,7 @@ import 'package:flutter_application_1/Models/imagePrint.dart';
 import 'package:flutter_application_1/Models/material.dart';
 import 'package:flutter_application_1/Models/print.dart';
 import 'package:flutter_application_1/Models/user.dart';
+import 'package:http/http.dart';
 
 class ProductsVM with ChangeNotifier {
   List<Print> lst = [];
@@ -13,11 +14,12 @@ class ProductsVM with ChangeNotifier {
     User user,
     String title,
     String description,
-    int price,
+    double price,
     int default_size,
     int default_weight,
     MaterialPrint default_material,
     List<ImagePrint> imagePrintings,
+    int nbr_of_printing_hours,
   ) {
     lst.add(Print(
         id: id,
@@ -29,7 +31,8 @@ class ProductsVM with ChangeNotifier {
         default_size: default_size,
         default_weight: default_weight,
         default_material: default_material,
-        imagePrintings: imagePrintings));
+        imagePrintings: imagePrintings,
+        nbr_of_printing_hours: nbr_of_printing_hours));
     notifyListeners();
   }
 

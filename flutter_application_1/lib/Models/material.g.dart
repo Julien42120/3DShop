@@ -14,6 +14,7 @@ MaterialPrint _$MaterialPrintFromJson(Map<String, dynamic> json) =>
       density: (json['density'] as num).toDouble(),
       price_per_kg: json['price_per_kg'] as int,
       color: json['color'] as String,
+      image: json['image'] as String,
     );
 
 Map<String, dynamic> _$MaterialPrintToJson(MaterialPrint instance) =>
@@ -24,4 +25,5 @@ Map<String, dynamic> _$MaterialPrintToJson(MaterialPrint instance) =>
       'density': instance.density,
       'price_per_kg': instance.price_per_kg,
       'color': instance.color,
+      'image': instance.image,
     };

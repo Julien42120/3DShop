@@ -22,11 +22,14 @@ class ConfigProductPage extends StatefulWidget {
 }
 
 class _ConfigProductPageState extends State<ConfigProductPage> {
+  Future<double>? _price;
+  late String selectedValueId;
+  late String actualPrintId;
+
   late List<MaterialPrint>? listmaterial = [];
   Print? printing;
   late List<ImagePrint>? imagesPrint = [];
-  late String actualPrintId;
-  Future<int>? _price;
+
   String? userConnectedId;
 
   PrintService printService = PrintService();
@@ -36,7 +39,6 @@ class _ConfigProductPageState extends State<ConfigProductPage> {
   ContainerTransitionType _transitionType = ContainerTransitionType.fade;
 
   MaterialPrint? selectedValue;
-  late String selectedValueId;
   List<MaterialPrint> itemsValues = [];
 
   @override
@@ -54,7 +56,7 @@ class _ConfigProductPageState extends State<ConfigProductPage> {
     for (var i = 0; i < listmaterial!.length; i++) {
       itemsValues.add(listmaterial![i]);
     }
-    _price = Future<int>.delayed(
+    _price = Future<double>.delayed(
         const Duration(seconds: 2), (() => printing!.price));
 
     userConnectedId = await storage.read(key: 'userID');
@@ -107,7 +109,7 @@ class _ConfigProductPageState extends State<ConfigProductPage> {
                   ),
                   Container(
                     padding:
-                        const EdgeInsets.only(left: 40, right: 40, top: 80),
+                        EdgeInsets.only(left: 40, right: 40, top: height * 0.2),
                     decoration:
                         BoxDecoration(color: Color.fromARGB(83, 70, 173, 19)),
                     child: Column(
@@ -266,10 +268,56 @@ class _ConfigProductPageState extends State<ConfigProductPage> {
                                           ),
                                         ),
                                         DropdownButton(
+                                          alignment: Alignment.center,
+                                          iconSize: 20,
                                           value: selectedValue,
                                           items: itemsValues.map((item) {
                                             return DropdownMenuItem(
-                                              child: Text(item.color),
+                                              child: Row(
+                                                mainAxisAlignment:
+                                                    MainAxisAlignment
+                                                        .spaceBetween,
+                                                children: [
+                                                  Container(
+                                                    margin:
+                                                        const EdgeInsets.only(
+                                                            right: 20),
+                                                    child: Text(
+                                                      '(' +
+                                                          item.type_name +
+                                                          ')',
+                                                      style: const TextStyle(
+                                                          fontSize: 12),
+                                                    ),
+                                                  ),
+                                                  Text(item.color),
+                                                  Container(
+                                                    margin:
+                                                        const EdgeInsets.only(
+                                                            left: 20),
+                                                    height: 25,
+                                                    width: 25,
+                                                    decoration: BoxDecoration(
+                                                      image: DecorationImage(
+                                                        alignment:
+                                                            Alignment.center,
+                                                        matchTextDirection:
+                                                            true,
+                                                        repeat: ImageRepeat
+                                                            .noRepeat,
+                                                        fit: BoxFit.cover,
+                                                        image: NetworkImage(
+                                                            item.image),
+                                                      ),
+                                                      borderRadius:
+                                                          const BorderRadius
+                                                              .all(
+                                                        Radius.circular(5),
+                                                      ),
+                                                    ),
+                                                  )
+                                                ],
+                                              ),
                                               value: item,
                                             );
                                           }).toList(),
@@ -329,11 +377,11 @@ class _ConfigProductPageState extends State<ConfigProductPage> {
                                       ),
                                     ),
                                   ),
-                                  FutureBuilder<int>(
+                                  FutureBuilder<double>(
                                     future:
                                         _price, // a previously-obtained Future<String> or null
                                     builder: (BuildContext context,
-                                        AsyncSnapshot<int> snapshot) {
+                                        AsyncSnapshot<double> snapshot) {
                                       List<Widget> children;
                                       if (snapshot.hasData) {
                                         children = <Widget>[
@@ -391,18 +439,16 @@ class _ConfigProductPageState extends State<ConfigProductPage> {
                                       borderRadius: const BorderRadius.all(
                                         Radius.circular(10),
                                       ),
-                                      color: const Color.fromARGB(
-                                          255, 65, 197, 69),
+                                      color: Color.fromARGB(255, 255, 255, 255),
                                       child: InkWell(
                                         borderRadius: const BorderRadius.all(
                                           Radius.circular(10),
                                         ),
                                         splashColor:
                                             Colors.red.withOpacity(0.8),
-                                        focusColor:
-                                            Colors.green.withOpacity(0.0),
+                                        focusColor: Colors.white,
                                         hoverColor:
-                                            Color.fromARGB(255, 53, 160, 57),
+                                            Color.fromARGB(124, 70, 173, 19),
                                         onTap: () async {
                                           value.add(
                                             printing!.id,
@@ -415,6 +461,7 @@ class _ConfigProductPageState extends State<ConfigProductPage> {
                                             printing!.default_weight,
                                             selectedValue!,
                                             imagesPrint!,
+                                            printing!.nbr_of_printing_hours,
                                           );
                                           ScaffoldMessenger.of(context)
                                               .showSnackBar(
@@ -422,7 +469,8 @@ class _ConfigProductPageState extends State<ConfigProductPage> {
                                               content: Text(
                                                 'Produit ajouté',
                                                 style: TextStyle(
-                                                    color: Colors.black),
+                                                  color: Colors.black,
+                                                ),
                                               ),
                                               backgroundColor: Color.fromARGB(
                                                   255, 64, 172, 68),
@@ -433,16 +481,20 @@ class _ConfigProductPageState extends State<ConfigProductPage> {
                                           padding: const EdgeInsets.all(10),
                                           child: Row(
                                             children: [
-                                              const Icon(Icons
-                                                  .add_shopping_cart_sharp),
+                                              const Icon(
+                                                Icons.add_shopping_cart_sharp,
+                                                color: Color.fromARGB(
+                                                    124, 70, 173, 19),
+                                              ),
                                               Container(
-                                                margin: EdgeInsets.symmetric(
-                                                    horizontal: 10),
+                                                margin:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 10),
                                                 child: const Text(
                                                   "Ajouter au panier",
                                                   style: TextStyle(
                                                     color: Color.fromARGB(
-                                                        255, 0, 0, 0),
+                                                        124, 70, 173, 19),
                                                     fontSize: 14,
                                                     fontWeight: FontWeight.bold,
                                                   ),

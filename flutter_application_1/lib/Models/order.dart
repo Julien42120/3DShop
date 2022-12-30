@@ -10,6 +10,7 @@ class Order {
   String billing_address;
   String delivery_address;
   List<Print> printing;
+  double final_price;
 
   Order({
     required this.id,
@@ -17,6 +18,7 @@ class Order {
     required this.billing_address,
     required this.delivery_address,
     required this.printing,
+    required this.final_price,
   });
 
   factory Order.fromJson(Map<String, dynamic> json) => _$OrderFromJson(json);

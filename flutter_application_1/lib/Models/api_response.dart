@@ -1,5 +1,5 @@
 class APIResponse {
-  static String baseUrl = 'http://127.0.0.1:8000';
+  static String baseUrl = 'https://3dshopapi.fr/public';
   static String categoriesUrl = '/categories';
   static String categoryIdUrl = '/category/';
   static String printIdUrl = '/printing/';
@@ -11,4 +11,5 @@ class APIResponse {
   static String material = '/api/materials';
   static String config = '/get_price';
   static String cart = '/api/carts';
+  static String order = '/api/orders';
 }

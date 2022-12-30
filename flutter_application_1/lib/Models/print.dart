@@ -11,11 +11,12 @@ class Print {
   User user;
   String title;
   String description;
-  int price;
+  double price;
   int default_size;
   int default_weight;
   MaterialPrint? default_material;
   List<ImagePrint> imagePrintings;
+  int nbr_of_printing_hours;
 
   Print({
     required this.id,
@@ -28,6 +29,7 @@ class Print {
     required this.default_weight,
     required this.default_material,
     required this.imagePrintings,
+    required this.nbr_of_printing_hours,
   });
 
   factory Print.fromJson(Map<String, dynamic> json) => _$PrintFromJson(json);
