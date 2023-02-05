@@ -15,7 +15,6 @@ class CategoryService {
         jsonResponse['categories'].forEach((v) {
           results.add(Category.fromJson(v));
         });
-        print(results);
         return results;
       } else {
         throw Exception('Failed to load Categories from API');

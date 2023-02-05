@@ -8,7 +8,7 @@ part of 'print.dart';
 
 Print _$PrintFromJson(Map<String, dynamic> json) => Print(
       id: json['id'] as int,
-      category: json['category'] as String,
+      category: Category.fromJson(json['category'] as Map<String, dynamic>),
       user: User.fromJson(json['user'] as Map<String, dynamic>),
       title: json['title'] as String,
       description: json['description'] as String,

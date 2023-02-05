@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:flutter_application_1/Models/category.dart';
 import 'package:flutter_application_1/Models/imagePrint.dart';
 import 'package:flutter_application_1/Models/material.dart';
 import 'package:flutter_application_1/Models/print.dart';
@@ -10,7 +11,7 @@ class ProductsVM with ChangeNotifier {
 
   add(
     int id,
-    String category,
+    Category category,
     User user,
     String title,
     String description,

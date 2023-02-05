@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'package:flutter_application_1/Models/api_response.dart';
+import 'package:flutter_application_1/Models/configuration.dart';
 import 'package:flutter_application_1/Models/order.dart';
 import 'package:flutter_application_1/Models/user.dart';
 import 'package:http/http.dart' as http;
@@ -48,11 +49,12 @@ class UserService {
     if (response.statusCode == 200) {
       var result = await jsonDecode(response.body);
       var token = result["token"];
-
+      print(token);
       await storage.write(key: 'token', value: token);
+      await storage.write(key: 'userConnected', value: 'oui');
       return result;
     } else {
-      throw Exception('Erreur de Connexion');
+      return null; // TO DO
     }
   }
 
@@ -78,7 +80,7 @@ class UserService {
       await storage.write(key: 'userID', value: user.id.toString());
       return user;
     } else {
-      throw Exception('Failed to connect user'); // TO DO
+      throw Exception('Failed to connect user');
     }
   }
 
@@ -106,9 +108,32 @@ class UserService {
     }
   }
 
+  Future<List<Configuration>?> getProductOfOrder(String idOrder) async {
+    // var token = await storage.read(key: 'token');
+    var url = Uri.parse(APIResponse.baseUrl + APIResponse.orderId + idOrder);
+    var response = await http.get(
+      url,
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        // 'Authorization': 'Bearer $token'
+      },
+    );
+    print(response);
+    if (response.statusCode == 200) {
+      var jsonResponse = await json.decode(response.body);
+      List<Configuration> results = [];
+      jsonResponse['order'].forEach((v) {
+        results.add(Configuration.fromJson(v));
+      });
+      return results;
+    } else {
+      throw Exception('Failed to connect user');
+    }
+  }
+
   void logout() async {
     await storage.deleteAll();
-    print(storage);
   }
 
   Future<User> modifyUser(String userId, String email, String password,
@@ -138,4 +163,23 @@ class UserService {
       throw Exception('Failed to connect user');
     }
   }
+
+  // Future<User> getUser(String userId) async {
+  //   var token = await storage.read(key: 'token');
+  //   var url = Uri.parse(APIResponse.baseUrl + APIResponse.user + userId);
+  //   var response = await http.get(
+  //     url,
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //       'Accept': 'application/json',
+  //     },
+  //   );
+  //   print(response);
+  //   if (response.statusCode == 200) {
+  //     var jsonResponse = await json.decode(response.body);
+  //     return User.fromJson(jsonResponse);
+  //   } else {
+  //     throw Exception('Failed to connect user');
+  //   }
+  // }
 }

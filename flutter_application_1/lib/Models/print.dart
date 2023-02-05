@@ -1,3 +1,4 @@
+import 'package:flutter_application_1/Models/category.dart';
 import 'package:flutter_application_1/Models/imagePrint.dart';
 import 'package:flutter_application_1/Models/material.dart';
 import 'package:flutter_application_1/Models/user.dart';
@@ -7,7 +8,7 @@ part 'print.g.dart';
 @JsonSerializable()
 class Print {
   int id;
-  String category;
+  Category category;
   User user;
   String title;
   String description;
